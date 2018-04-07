@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include header %>
+  </head>
+  <body>
+    <div class="container">
+      <h1><%= title %></h1>
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="home">Principal</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="/home?seccion=gestionar">Datos Personales</a></li>
+              <li class="active"><a href="/home?seccion=nuevaactividad">Apuntarse Actividad</a></li>
+              <li><a href="/home?seccion=veractividad">Información Actividad</a></li>
+              <li><a href="/signout">Cerrar Sesión</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+      <div class="row">
+          <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <form class="form-signin" action="/condicionesactividad" method="POST">
+              <legend>Nueva Actividad</legend>
+              <textarea name="condiciones" class="form-control" rows="4" cols="80" required/></textarea>
+              <button class="btn btn-lg btn-primary btn-block" type="submit" name="gestionparticipante" value="aceptar">Aceptar condiciones</button>
+              <button class="btn btn-lg btn-primary btn-block" type="submit" name="gestionparticipante" value="baja">Darse de baja</button>
+              <span class="clearfix"/>
+            </form>
+                <% if(message){%>
+                  <h1 class="text-center error-message"><%= message %></h1>
+                <%}%>
+              </div>
+          </div>
+      </div>
+    </div>
+  <% include footer %>
+  </body>
+</html>

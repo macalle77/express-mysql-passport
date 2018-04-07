@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>-->
+    <!-- Bootstrap core CSS -->
+    <link href="/stylesheet/bootstrap.min.css" rel="stylesheet">
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="/stylesheet/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/stylesheet/navbar.css" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <link href="/stylesheet/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/ie-emulation-modes-warning.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1><%= title %></h1>
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="home">Principal</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="https://getbootstrap.com/docs/3.3/examples/navbar/#">Nuevo Usuario</a></li>
+              <li><a href="https://getbootstrap.com/docs/3.3/examples/navbar/#">Gestión Usuarios</a></li>
+              <li><a href="/signout">Cerrar Sesión</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+      <div class="row">
+          <div class="col-sm-6 col-md-4 col-md-offset-4">
+              <h1 class="text-center login-title">Detalles del registro</h1>
+              <div class="signup-wall">
+                <form class="form-signin" action="/signupuser" method="POST">
+                  <input type="text" name="dni" class="form-control" placeholder="Dni" required autofocus/>
+                  <input type="text" name="nombre" class="form-control" placeholder="Nombre" required/>
+                  <input type="text" name="apellidos" class="form-control" placeholder="Apellidos" required/>
+                  <input type="email" name="email" class="form-control" placeholder="Email", required/>
+                  <input type="text" name="telefono" class="form-control" placeholder="Telefono" required/>
+                  <input type="text" name="direccion" class="form-control" placeholder="Direccion" required/>
+                  <input type="password" name="password" class="form-control nomargin" placeholder="Password" required/>
+                  <button class="btn btn-lg btn-primary btn-block" type="submit">Registrar</button>
+                  <button class="btn btn-lg btn-primary btn-block" type="reset">Cancelar</button>
+                  <span class="clearfix"/>
+                </form>
+                <% if(message){%>
+                  <h1 class="text-center error-message"><%= message %></h1>
+                <%}%>
+              </div>            
+          </div>
+      </div>
+    </div>
+  <script src="/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript
+   ================================================== -->
+   <!-- Placed at the end of the document so the pages load faster -->
+   <script src="/js/jquery.min.js"></script>
+   <script>window.jQuery || document.write('<script src="/js/jquery.min.js"><\/script>')</script>
+   <script src="/js/bootstrap.min.js"></script>
+   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+   <script src="/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

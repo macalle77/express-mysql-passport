@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include header %>
+  </head>
+  <body>
+  <div class="container">
+  <div class="row">
+    <div class="col-sm-4 col-md-6 col-lg-12 col-md-offset-4">
+      <h1><%= title %></h1>
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="home">Principal</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="/home?seccion=nuevo">Nuevo Participante</a></li>
+              <li><a href="/home?seccion=listado">Gestión Participantes</a></li>
+              <li><a href="/home?seccion=gestionar">Gestión Actividad</a></li>
+              <li class="active"><a href="/home?seccion=nuevaactividad">Nueva Actividad</a></li>
+              <li><a href="/signout">Cerrar Sesión</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+          <div>
+            <form class="form-signin" action="/nuevaactividad" method="POST">
+              <legend>Nueva Actividad</legend>
+              <input type="text" name="titulo" class="form-control" placeholder="Titulo" required autofocus/>
+              <textarea name="descripcion" class="form-control" rows="4" cols="80" required/></textarea>
+              <textarea name="requisitos" class="form-control" rows="4" cols="80" required/></textarea>
+              Fecha Inicio:<input type="date" name="inicio" required/><br/>
+              Fecha Fin:<input type="date" name="fin" required/>
+              <button class="btn btn-lg btn-primary btn-block" type="submit">Crear</button>
+              <button class="btn btn-lg btn-primary btn-block" type="reset">Cancelar</button>
+              <span class="clearfix"/>
+            </form>
+                <% if(message){%>
+                  <h1 class="text-center error-message"><%= message %></h1>
+                <%}%>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% include footer %>
+  </body>
+</html>
