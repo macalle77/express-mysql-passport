@@ -156,7 +156,7 @@ module.exports = function(passport){
           }
           else if(seccion=="nuevaactividad"){
             res.render('parnewactividad',{
-              title: 'Nueva Activid',
+              title: 'Nueva Actividad',
               message: req.flash('message')
             });
           }
