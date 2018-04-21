@@ -42,14 +42,14 @@ module.exports = function(passport){
     }));
 
     /* GET Registration Page */
-    router.get('/signup', function(req, res){
+    /*router.get('/signup', function(req, res){
       res.render('register',{message: req.flash('message')});
-    });
+    });*/
 
     /* Handle Registration POST */
     router.post('/signupuser', passport.authenticate('signupuser', {
-      successRedirect: '/home',
-      failureRedirect: '/signupuser',
+      successRedirect: '/home?seccion=listado',
+      failureRedirect: '/home?seccion=nuevo',
       failureFlash : true
     }));
 
@@ -157,6 +157,9 @@ module.exports = function(passport){
           else if(seccion=="nuevaactividad"){
             res.render('parnewactividad',{
               title: 'Nueva Actividad',
+              actividad:{
+                titulo:'Actividad 1'
+              },
               message: req.flash('message')
             });
           }
@@ -173,6 +176,15 @@ module.exports = function(passport){
           }
         });
       }
+    });
+
+    router.get('/deleteuser/:id',isAuthenticated,(req, res)=>{
+      let id=req.params.id;
+      console.log("borrado");
+      model.deleteUser(id,function(err,rows){
+        if(err) throw err;
+        res.redirect('/home?seccion=listado');
+      })
     });
 
     router.post('/add',isAuthenticated ,(req, res) => {
@@ -197,16 +209,7 @@ module.exports = function(passport){
       });
     });
 
-    router.get('/delete/:id', isAuthenticated, (req, res, next) => {
-      let id= req.params.id;
-      console.log("borrado");
-      model.remove({_id: id}, (err,task)=>{
-        if(err) throw err;
-        res.redirect('/home');
-      });
-    });
-
-    /* Handle Logout */
+    /* Logout */
     router.get('/signout', function(req, res) {
       req.logout();
       res.redirect('/');

@@ -13,7 +13,7 @@ module.exports = function(passport){
         },
         function(req, username, password, done) {
             console.log('Registro comenzado con perfil:'+req.user.perfil);
-            findOrCreateUser = function(){              
+            findOrCreateUser = function(){
                           // creamos el usuario
                           // Tendremos en cuenta si el usuario que está registrando tiene perfil Administrador.
                           // El nuevo usuario tendrá un password asignado por el administrador y el perfil indicado

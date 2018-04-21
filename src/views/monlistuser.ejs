@@ -15,7 +15,7 @@
               <li class="nav-item active"><a class="nav-link" href="/home?seccion=listado">Gestión Participantes<span class="sr-only">(current)</span></a></li>
               <li class="nav-item"><a class="nav-link" href="/home?seccion=gestionar">Gestión Actividad</a></li>
               <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevaactividad">Nueva Actividad</a></li>
-              <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevo">Nueva Participante</a></li>
+              <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevo">Nuevo Participante</a></li>
               <li class="nav-item"><a class="nav-link" href="/signout">Cerrar Sesión</a></li>
            </ul>
          </div>
@@ -38,9 +38,13 @@
         </button>
       </form>
       </hr>
-      <table class="table table-bordered table-hover">
+      <div class="table-responsive">
+      <table class="table table-bordered table-hover table-condensed">
         <thead>
           <tr>
+            <th>Eliminar</th>
+            <th>Actualizar</th>
+            <th>Confirmar pago</th>
             <th>#</th>
             <th>DNI</th>
             <th>Nombre</th>
@@ -48,15 +52,15 @@
             <th>Teléfono</th>
             <th>Dirección</th>
             <th>Email</th>
-            <th>Eliminar</th>
-            <th>Actualizar</th>
-            <th>Confirmar pago</th>
-            <th>Confirmar firma</th>
           </tr>
         </thead>
         <tbody>
             <% for (var i = 0; i < users.length; i++) { %>
                 <tr>
+                  <% if (users[i].perfil=='monitor' || users[i].perfil=='participante'){%>
+                    <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-href="/deleteuser/<%= users[i].dni%>" data-target="#borrarModal" data-id="#borrarModal">Borrar</button></td>
+                    <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal<%= users[i].dni%>" data-id="#editModal<%= users[i].dni%>">Actualizar</button></td>
+                    <td><a id="pagado" class="<%= users[i].pagado ? 'btn btn-success':'btn btn-dark'%>" href="/pagadouser/<%= users[i].dni%>">Pagado</a></td>
                     <td><%= i + 1 %></td>
                     <td><%= users[i].dni %></td>
                     <td><%= users[i].nombre %></td>
@@ -64,24 +68,77 @@
                     <td><%= users[i].telefono %></td>
                     <td><%= users[i].direccion %></td>
                     <td><%= users[i].email %></td>
-                    <td><a id="delete" class="btn btn-danger" href="/deleteuser/<%= users[i].dni%>">Borrar</a></td>
-                    <td><a id="update" class="btn btn-danger" href="/updateuser/<%= users[i].dni%>">Actualizar</a></td>
-                    <td><a id="pagado" class="<%= users[i].pagado ? 'btn btn-success':'btn btn-dark'%>" href="/pagadouser/<%= users[i].dni%>">Pagado</a></td>
-                    <td><a id="firmado" class="<%= users[i].firmado ? 'btn btn-success':'btn btn-dark'%>" href="/firmadouser/<%= users[i].dni%>">Firmado</a></td>
+                    <!--<td><a id="firmado" class="<%= users[i].firmado ? 'btn btn-success':'btn btn-dark'%>" href="/firmadouser/<%= users[i].dni%>">Firmado</a></td>-->
+                    <div class="modal fade bs-example-modal-sm" id="editModal<%= users[i].dni%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                     <div class="modal-dialog modal-lg" role="document">
+                         <div class="modal-content">
+                             <div class="modal-header">
+                               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                               <h4 class="modal-title" id="exampleModalLabel">Actualizar</h4>
+                             </div>
+                             <div class="modal-body">
+                                <form method="post" action="/updateuser">
+                                   <div class="form-group">
+                                      <label for="dni" class="col-form-label">Dni</label>
+                                      <input type="text" name="dni" id="dni" class="form-control" value="<%= users[i].dni %>" required autofocus/>
+                                    </div>
+                                    <div class="form-group">
+                                       <label for="nombre" class="col-form-label">Nombre</label>
+                                       <input type="text" name="nombre" id="nombre" value="<%= users[i].nombre %>" class="form-control" required/>
+                                    </div>
+                                     <div class="form-group">
+                                        <label for="apellidos" class="col-form-label">Apellidos</label>
+                                        <input type="text" name="apellidos" id="apellidos" value="<%= users[i].apellidos %>" class="form-control" required/>
+                                      </div>
+                                      <div class="form-group">
+                                         <label for="email" class="col-form-label">Email</label>
+                                         <input type="email" name="email" id="email" class="form-control" value="<%= users[i].email %>" required/>
+                                       </div>
+                                       <div class="form-group">
+                                          <label for="telefono" class="col-form-label">Teléfono</label>
+                                          <input type="text" name="telefono" id="telefono" class="form-control" value="<%= users[i].telefono %>" required/>
+                                       </div>
+                                       <div class="form-group">
+                                           <label for="direccion" class="col-lg-2 col-form-label">Dirección</label>
+                                           <input type="text" name="direccion" id="direccion" class="form-control" value="<%= users[i].direccion %>" required/>
+                                       </div>
+                                </form>
+                             <div class="modal-footer">
+                                   <button type="button" class="btn btn-default" name="btncan" data-dismiss="modal">Cancelar</button>
+                                   <button type="submit" class="btn btn-primary"name="btnMod">Guardar</button>
+                             </div>
+                            </div>
+                         </div>
+                   </div>
+                  </div>
+                  <%}%>
                   </tr>
               <% } %>
         </tbody>
       </table>
+     </div>
     </div>
-   <script>
-     document.getElementById('title').focus();
-     document.getElementById('delete').addEventListener('click', function(e){
-       let response=confirm('¿Estás seguro de borrar este usuario?');
-       if(!response){
-         e.preventDefault();
-       }
-     })
-   </script>
-   <% include footer %>
+    <div class="modal fade" id="borrarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confimar eliminación del usuario
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro que vas a eliminar a este usuario?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <a class="btn btn-danger btn-ok">Borrar</a>
+            </div>
+        </div>
+    </div>
+  </div>
+  <% include footer %>
+  <script>
+  $('#borrarModal').on('show.bs.modal', function(e) {
+    $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+  });
+  </script>
   </body>
 </html>

@@ -63,7 +63,8 @@ userModel.getUserDni = function(dni,callback)
 		{
 			if(error)
 			{
-				throw error;
+				//throw error;
+				callback(error, row);
 			}
 			else
 			{
@@ -83,7 +84,7 @@ userModel.getUserName = function(user,callback)
 		{
 			if(error)
 			{
-				throw error;
+				callback(error, row);
 			}
 			else
 			{
@@ -92,7 +93,6 @@ userModel.getUserName = function(user,callback)
 		});
 	}
 }
-
 
 //obtenemos un usuario por su email
 userModel.getUserEmail = function(email,callback)
@@ -104,28 +104,7 @@ userModel.getUserEmail = function(email,callback)
 		{
 			if(error)
 			{
-				throw error;
-			}
-			else
-			{
-				callback(null, row);
-			}
-		});
-	}
-}
-
-
-//obtenemos un usuario por su email
-userModel.getUserEmail = function(email,callback)
-{
-	if (connection)
-	{
-		var sql = 'SELECT * FROM Usuarios WHERE email = ' + connection.escape(email);
-		connection.query(sql, function(error, row)
-		{
-			if(error)
-			{
-				throw error;
+				callback(error, row);
 			}
 			else
 			{
@@ -145,7 +124,7 @@ userModel.insertUser = function(userData,callback)
 		{
 			if(error)
 			{
-				throw error;
+				callback(error,null);
 			}
 			else
 			{
@@ -170,7 +149,7 @@ userModel.updateUser = function(userData, callback)
 		{
 			if(error)
 			{
-				throw error;
+				callback(error, row);
 			}
 			else
 			{
@@ -183,15 +162,17 @@ userModel.updateUser = function(userData, callback)
 //eliminar un usuario pasando la id a eliminar
 userModel.deleteUser = function(id, callback)
 {
+	console.log("Valor de id:"+id)
 	if(connection)
 	{
-		var sqlExists = 'SELECT * FROM accesos WHERE id = ' + connection.escape(id);
+		var sqlExists = 'SELECT * FROM Usuarios WHERE dni = ' + connection.escape(id);
 		connection.query(sqlExists, function(err, row)
 		{
 			//si existe la id del usuario a eliminar
 			if(row)
 			{
-				var sql = 'DELETE FROM accesos WHERE id = ' + connection.escape(id);
+				console.log("Borrar:"+connection.escape(id));
+				var sql = 'DELETE FROM Usuarios WHERE dni = ' + connection.escape(id);
 				connection.query(sql, function(error, result)
 				{
 					if(error)
@@ -206,6 +187,7 @@ userModel.deleteUser = function(id, callback)
 			}
 			else
 			{
+				console.log("No puede borrar:"+connection.escape(id));
 				callback(null,{"msg":"notExist"});
 			}
 		});

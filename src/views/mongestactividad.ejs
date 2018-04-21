@@ -15,31 +15,42 @@
                <li class="nav-item"><a class="nav-link" href="/home?seccion=listado">Gestión Participantes</a></li>
                <li class="nav-item active"><a class="nav-link" href="/home?seccion=gestionar">Gestión Actividad<span class="sr-only">(current)</span></a></li>
                <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevaactividad">Nueva Actividad</a></li>
-               <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevo">Nueva Participante</a></li>
+               <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevo">Nuevo Participante</a></li>
                <li class="nav-item"><a class="nav-link" href="/signout">Cerrar Sesión</a></li>
             </ul>
           </div>
         </div>
       </nav>
       <div class="container">
-              <h2><%= actividad.titulo%></h2>
-              <hr/>
-              <legend>Descripción de la actividad</legend>
-              <div class="form-group">
-                  <textarea class="form-control" name="descripcion" rows="3" cols="80"><%= actividad.descripcion%></textarea>
+        <h2>Información de la actividad "<%= actividad.titulo%>"</h2>
+          <form class="form-signin" action="/modificaractividad" method="POST">
+              <div class="form-group row">
+                  <label for="descripcion" class="col-lg-2 col-form-label">Descripción de la actividad</label>
+                  <div class="col-lg-10">
+                    <textarea class="form-control" id="descripcion" name="descripcion" rows="5" cols="80"><%= actividad.descripcion%></textarea>
+                  </div>
               </div>
-              <div class="form-group">
-                  <textarea class="form-control" name="requisitos" rows="3" cols="80"><%= actividad.requisitos%></textarea>
+              <div class="form-group row">
+                  <label for="requisitos" class="col-lg-2 col-form-label">Requisitos de la actividad</label>
+                  <div class="col-lg-10">
+                    <textarea class="form-control" id="requisitos" name="requisitos" rows="5" cols="80"><%= actividad.requisitos%></textarea>
+                  </div>
               </div>
-              <div class="signup-wall">
-                <form class="form-signin" action="/listadoparticipantes" method="POST">
-                  <button class="btn btn-lg btn-primary btn-block" type="submit">Listado de Participantes</button>
-                  <span class="clearfix"/>
-                </form>
-                <% if(message){%>
-                  <h1 class="text-center error-message"><%= message %></h1>
-                <%}%>
+              <div class="form-group row">
+                  <div class="col-lg-6">
+                      <button class="btn btn-lg btn-primary btn-block" type="submit">Modificar</button>
+                  </div>
+                  <div class="col-lg-6">
+                      <button class="btn btn-lg btn-primary btn-block" type="reset">Cancelar</button>
+                  </div>
               </div>
+          </form>
+          <form class="form-signin" action="/listadoparticipantes" method="POST">
+              <button class="btn btn-lg btn-primary btn-block" type="submit">Obtener listado de participantes</button>
+          </form>
+          <% if(message){%>
+              <h1 class="text-center error-message"><%= message %></h1>
+          <%}%>
         </div>
   <% include footer %>
   </body>
