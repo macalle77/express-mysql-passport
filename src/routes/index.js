@@ -138,19 +138,12 @@ module.exports = function(passport){
         });
       }
       else{
-        console.log("Seccion participante:"+seccion)
-        model.getUsers(function(err,users){
+         model.getUserDni(req.user.dni,function(err,usuario){
+          console.log("Seccion participante:"+usuario[0].dni);
           if(seccion=="gestionar"){
             res.render('pardatospersonales',{
               title: 'Gestionar Actividades',
-              user:{
-                dni: '235',
-                nombre:'miguel',
-                apellidos: 'calle',
-                telefono: '445',
-                direccion: 'calle',
-                email: 'macalle@gmail.com'
-              },
+              user:usuario[0],
               message: req.flash('message')
             });
           }
@@ -164,6 +157,7 @@ module.exports = function(passport){
             });
           }
           else{
+            console.log("Datos de participante:"+req.user.nombre);
             res.render('parveractividad',{
               title: 'Datos Actividad',
               actividad:{
@@ -174,7 +168,7 @@ module.exports = function(passport){
               message: req.flash('message')
             });
           }
-        });
+        })
       }
     });
 
@@ -185,6 +179,14 @@ module.exports = function(passport){
         if(err) throw err;
         res.redirect('/home?seccion=listado');
       })
+    });
+
+    router.post('/updateuser',isAuthenticated,(req,res)=> {
+        console.log("Valor req:"+req.body.nombre);
+        model.updateUser(req.body,function(err,rows){
+          if(err) throw err;
+          res.redirect('/home?seccion=listado');
+        })
     });
 
     router.post('/add',isAuthenticated ,(req, res) => {

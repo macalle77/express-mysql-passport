@@ -33,13 +33,13 @@ userModel.getUsers = function(callback)
 	}
 }
 
-//obtenemos un usuario por su id
-userModel.getUser = function(id,callback)
+//obtenemos un usuario por su dni
+userModel.getUserDni = function(dni,callback)
 {
 	if (connection)
 	{
-		var sql = 'SELECT * FROM accesos WHERE id = ' + connection.escape(id);
-		connection.query(sql, function(error, row)
+		var sql = 'SELECT * FROM Usuarios WHERE dni ='+connection.escape(dni);
+		connection.query(sql, function(error, rows)
 		{
 			if(error)
 			{
@@ -47,28 +47,9 @@ userModel.getUser = function(id,callback)
 			}
 			else
 			{
-				callback(null, row);
-			}
-		});
-	}
-}
+			  console.log("SQL actualización:"+sql+"Resultado:"+rows.length+"nombre"+rows.nombre);
 
-//obtenemos un usuario por su dni
-userModel.getUserDni = function(dni,callback)
-{
-	if (connection)
-	{
-		var sql = 'SELECT * FROM Usuarios WHERE dni = ' + connection.escape(dni);
-		connection.query(sql, function(error, row)
-		{
-			if(error)
-			{
-				//throw error;
-				callback(error, row);
-			}
-			else
-			{
-				callback(null, row);
+				callback(null, rows);
 			}
 		});
 	}
@@ -141,15 +122,21 @@ userModel.updateUser = function(userData, callback)
 	//console.log(userData); return;
 	if(connection)
 	{
-		var sql = 'UPDATE accesos SET username = ' + connection.escape(userData.username) + ',' +
-		'email = ' + connection.escape(userData.email) +
-		'WHERE id = ' + userData.id;
+		var sql = 'UPDATE Usuarios SET nombre = ' + connection.escape(userData.nombre) + ',' +
+		'apellidos = ' + connection.escape(userData.apellidos) + ','+
+		'telefono = ' + connection.escape(userData.telefono) + ',' +
+		'direccion = ' + connection.escape(userData.direccion) + ',' +
+		'email = ' + connection.escape(userData.email) + ',' +
+		'perfil = ' + connection.escape(userData.perfil) +
+		' WHERE dni = ' + userData.dni;
+
+		console.log('Consulta de actualización:'+sql);
 
 		connection.query(sql, function(error, result)
 		{
 			if(error)
 			{
-				callback(error, row);
+				callback(error, result);
 			}
 			else
 			{

@@ -29,8 +29,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 //app.set('view engine', 'jade');
 app.use(logger('dev'));
+
+//Al utilizar Express contamos con un middleware que se llama body-parser,
+//que nos ayudará a acceder al contenido del cuerpo de las peticiones.
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))

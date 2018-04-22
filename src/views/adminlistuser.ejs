@@ -75,7 +75,7 @@
                 							  <h4 class="modal-title" id="exampleModalLabel">Actualizar</h4>
                 							</div>
                 							<div class="modal-body">
-                							   <form method="post" action="/updateuser">
+                							   <form method="POST" action="/updateuser">
                                    <div class="form-group">
                                       <label for="dni" class="col-form-label">Dni</label>
                                       <input type="text" name="dni" id="dni" class="form-control" value="<%= users[i].dni %>" required autofocus/>
@@ -109,11 +109,11 @@
                                                  <option value="monitor" <%= users[i].perfil=="monitor" ? 'selected' : ''%>>Monitor</option>
                                                </select>
                                            </div>
-                							   </form>
           							      <div class="modal-footer">
               							        <button type="button" class="btn btn-default" name="btncan" data-dismiss="modal">Cancelar</button>
               							        <button type="submit" class="btn btn-primary"name="btnMod">Guardar</button>
           							      </div>
+                              </form>
                 						 </div>
                 					</div>
                 		</div>
