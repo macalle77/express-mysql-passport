@@ -1,6 +1,8 @@
 var express = require('express');
 
-var model = require ('../model/user');
+var modelact = require ('../model/actividad');
+
+var modeluser = require ('../model/user');
 
 var router=express.Router();
 
@@ -60,7 +62,7 @@ module.exports = function(passport){
 
       if(req.user.perfil=="administrador"){
         console.log("Seccion administrador:"+seccion)
-        model.getUsers(function(err,users){
+        modeluser.getUsers(function(err,users){
           if(seccion=="nuevo"){
             res.render('adminnewuser',{
               title: 'Nuevo usuario',
@@ -77,7 +79,7 @@ module.exports = function(passport){
       }
       else if (req.user.perfil=="secretaria") {
         console.log("Seccion secretaria:"+seccion)
-        model.getUsers(function(err,users){
+        modeluser.getUsers(function(err,users){
           if(seccion=="nuevo"){
             res.render('secrenewuser',{
               title: 'Nuevo usuario',
@@ -105,7 +107,7 @@ module.exports = function(passport){
       }
       else if (req.user.perfil=="monitor") {
         console.log("Seccion monitor:"+seccion)
-        model.getUsers(function(err,users){
+        modeluser.getUsers(function(err,users){
           if(seccion=="nuevo"){
             res.render('monnewuser',{
               title: 'Nuevo usuario',
@@ -119,26 +121,27 @@ module.exports = function(passport){
             });
           }
           else if(seccion=="gestionar"){
-            res.render('mongestactividad',{
-              title: 'Gestionar Actividades',
-              actividad:{
-                  titulo:'Actividad 1',
-                  descripcion:'Descripcion 1',
-                  requisitos: 'Requisitos 1'
-              },
-              message: req.flash('message')
-            });
+            modelact.getActividad(function(err,activity){
+              res.render('mongestactividad',{
+                title: 'Gestionar Actividades',
+                actividad:activity[0],
+                message: req.flash('message')
+              });
+            })
           }
           else{
-            res.render('monnewactividad',{
-              title: 'Nueva Actividad',
-              message: req.flash('message')
+            modeluser.getUserPerfil('monitor',function(err,usuarios){
+              res.render('monnewactividad',{
+                monitores: usuarios,
+                title: 'Nueva Actividad',
+                message: req.flash('message')
             });
+          });
           }
         });
       }
       else{
-         model.getUserDni(req.user.dni,function(err,usuario){
+         modeluser.getUserDni(req.user.dni,function(err,usuario){
           console.log("Seccion participante:"+usuario[0].dni);
           if(seccion=="gestionar"){
             res.render('pardatospersonales',{
@@ -172,10 +175,18 @@ module.exports = function(passport){
       }
     });
 
+
+    router.post('/nuevaactividad',isAuthenticated,(req,res)=>{
+      modelact.insertActividad(req.body,function(err,rows){
+          if(err) throw err;
+          res.redirect('/home?seccion=listado');
+      })
+    })
+
     router.get('/deleteuser/:id',isAuthenticated,(req, res)=>{
       let id=req.params.id;
       console.log("borrado");
-      model.deleteUser(id,function(err,rows){
+      modeluser.deleteUser(id,function(err,rows){
         if(err) throw err;
         res.redirect('/home?seccion=listado');
       })
@@ -183,7 +194,7 @@ module.exports = function(passport){
 
     router.post('/updateuser',isAuthenticated,(req,res)=> {
         console.log("Valor req:"+req.body.nombre);
-        model.updateUser(req.body,function(err,rows){
+        modeluser.updateUser(req.body,function(err,rows){
           if(err) throw err;
           res.redirect('/home?seccion=listado');
         })
@@ -194,7 +205,7 @@ module.exports = function(passport){
       body.status=false;
       console.log ("nuevo");
       console.log("Mensaje sesion add:"+req.user.username)
-      model.create(body, (err, task) => {
+      modeluser.create(body, (err, task) => {
         if(err) throw err;
         res.redirect('/home');
        });
@@ -203,7 +214,7 @@ module.exports = function(passport){
     router.get('/turn/:id', isAuthenticated, (req, res)=> {
       let id=req.params.id;
       console.log("cambio");
-      model.findById(id, (err,task)=>{
+      modeluser.findById(id, (err,task)=>{
         if(err) throw err;
         task.status = !task.status;
         task.save()

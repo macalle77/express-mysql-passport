@@ -33,6 +33,26 @@ userModel.getUsers = function(callback)
 	}
 }
 
+//obtenemos lista de usuarios con un perfil determinado
+userModel.getUserPerfil= function(perfil, callback)
+{
+	if (connection)
+	{
+		var sql = 'SELECT * FROM Usuarios WHERE perfil ='+connection.escape(perfil);
+		connection.query(sql, function(error, rows)
+		{
+			if(error)
+			{
+				throw error;
+			}
+			else
+			{
+				callback(null, rows);
+			}
+		});
+	}
+}
+
 //obtenemos un usuario por su dni
 userModel.getUserDni = function(dni,callback)
 {

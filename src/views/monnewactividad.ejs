@@ -48,6 +48,17 @@
                       <input type="date" name="fecha" id="fecha" required/><br/>
                     </div>
                   </div>
+                  <div class="form-group row">
+                     <label for="fin" class="col-lg-2 col-form-label">Monitores que organizan</label>
+                     <div class="col-lg-10">
+                       <select name="monitores">
+                        <option value="" selected>Selecciona monitores</option>
+                       <% for(var i=0;i<monitores.length;i++){%>
+                        <option value="<%= monitores[i].dni%>"><%=monitores[i].nombre + ' ' + monitores[i].apellidos%></option>
+                       <% } %>
+                     </select>
+                     </div>
+                   </div>
                  <fieldset>
                   <legend>Periodo para apuntarse</legend>
                   <div class="form-group row">
