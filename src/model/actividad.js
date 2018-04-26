@@ -13,10 +13,60 @@ connection = mysql.createConnection(
 );
 
 //creamos un objeto para ir almacenando todo lo que necesitemos
-var userModel = {};
+var actModel = {};
 
-//añadir una nueva actividad
-userModel.insertActividad = function(actData,callback)
+//comprobar si usuario esta apuntado a una actividad ó no
+actModel.comprobarEstadoActividad = function(partData,actData){
+	if(connection){
+		sql='SELECT * from Participantes WHERE id_usuario= '+connection.escape(partData)+
+		'AND id_actividad='+connection.escape(actData)
+		connection.query(sql,function(error,result){
+			if(error) callback(error,null)
+			else {
+				if(result.length>0) return 1;
+				else return 0;
+			}
+		})
+	}
+}
+
+//asignar actividad a usuario desde secretaria
+actModel.apuntarActividad = function(partData,actData,callback){
+	if(connection){
+		sql='INSERT INTO Participantes (id_actividad, id_usuario) VALUES (' +
+		connection.escape(actData)+','+
+		connection.escape(partData)+')'
+		console.log("consulta apuntar a actividad:"+sql)
+		connection.query(sql,function(error, result){
+			if(error)	callback(error,null);
+			else callback(null,{"insertId" : result.insertId});
+		})
+
+	}
+}
+
+//Confirmar pago del participante desde secretaria
+actModel.confirmarPago = function(partData,actData,callback){
+	if(connection){
+
+	}
+}
+
+//aceptar las condiciones de participacion, firmar
+actModel.firmarActividad = function(partData,actData,callback){
+	if(connection){
+		sql='INSERT INTO Participantes (id_actividad, id_usuario, pagado, firmado) VALUES '
+	}
+}
+
+//darse de baja de una actividad.
+actModel.bajaActividad = function(partData,actData,callback){
+
+}
+
+
+//añadir actividad nueva
+actModel.insertActividad = function(actData,callback)
 {
 	if (connection)
 	{
@@ -60,7 +110,7 @@ userModel.insertActividad = function(actData,callback)
 }
 
 //obtener actividad activa, estamos dentro del periodo de inscripcion
-userModel.getActividad = function(callback)
+actModel.getActividad = function(callback)
 {
   var fecha_actual=moment().format('YYYY-MM-DD');
   console.log('Fecha actual:'+fecha_actual);
@@ -84,4 +134,4 @@ userModel.getActividad = function(callback)
   }
 }
 
-module.exports = userModel;
+module.exports = actModel;

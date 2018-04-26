@@ -61,8 +61,10 @@
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-href="/deleteuser/<%= users[i].dni%>" data-target="#borrarModal" data-id="#borrarModal">Borrar</button></td>
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal<%= users[i].dni%>" data-id="#editModal<%= users[i].dni%>">Actualizar</button></td>
                     <td><a id="pagado" class="<%= users[i].pagado ? 'btn btn-success':'btn btn-dark'%>" href="/pagadouser/<%= users[i].dni%>">Pagado</a></td>
+                    <% var valor=gest_actividad.comprobarEstadoActividad(users[i].dni,actividad)%>                    
                     <!--<td><a id="firmado" class="<%= users[i].firmado ? 'btn btn-success':'btn btn-dark'%>" href="/firmadouser/<%= users[i].dni%>">Firmado</a></td>-->
-                    <td><a id="apuntado" class="<%= users[i].apuntado ? 'btn btn-success':'btn btn-dark'%>" href="/asignaractividad/<%= users[i].dni%>">Apuntado</a></td>
+                    <td><a id="apuntado" class="<%= valor ? 'btn btn-success':'btn btn-dark'%>" href="/asignaractividad/<%= users[i].dni%>">Apuntar</a></td>
+
                     <td><%= i + 1 %></td>
                     <td><%= users[i].dni %></td>
                     <td><%= users[i].nombre %></td>

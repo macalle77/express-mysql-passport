@@ -1,5 +1,7 @@
 var express = require('express');
 
+var moment=require('moment');
+
 var modelact = require ('../model/actividad');
 
 var modeluser = require ('../model/user');
@@ -87,10 +89,14 @@ module.exports = function(passport){
             });
           }
           else if(seccion=="listado"){
-            res.render('secrelistuser',{
-              title: 'Lista de usuarios',
-              users:users
-            });
+            modelact.getActividad(function(err,activity){
+              res.render('secrelistuser',{
+                title: 'Lista de usuarios',
+                actividad:activity[0].id_actividad,
+                gest_actividad: modelact,
+                users:users
+              });
+            })
           }
           else{
             res.render('secregestactividad',{
@@ -160,21 +166,56 @@ module.exports = function(passport){
             });
           }
           else{
-            console.log("Datos de participante:"+req.user.nombre);
-            res.render('parveractividad',{
-              title: 'Datos Actividad',
-              actividad:{
-                  titulo:'Actividad 1',
-                  descripcion:'Descripcion 1',
-                  requisitos: 'Requisitos 1'
-              },
-              message: req.flash('message')
-            });
+            modelact.getActividad(function(err,activity){
+              console.log("fecha actividad 1:"+activity[0].fecha)
+              fecha=moment(activity[0].fecha).format('YYYY-MM-DD')
+              console.log("Fecha actividad 2:"+fecha)
+              res.render('parveractividad',{
+                title: 'Datos Actividad',
+                actividad:activity[0],
+                fecha_actividad:fecha,
+                message: req.flash('message')
+              });
+            })
           }
         })
       }
     });
 
+    router.get('/asignaractividad/:id',isAuthenticated,(req,res)=>{
+      let id_participante=req.params.id;
+      modelact.getActividad(function(err,activity){
+        if(err) throw err
+        else {
+            modelact.apuntarActividad(id_participante,activity[0].id_actividad,function(err,activity){
+              if(err) throw err;
+              else message: "Usuario apuntado a la actividad"
+            })
+          res.redirect('/home?seccion=listado');
+        }
+      })
+    })
+
+    router.post('/condicionesactividad',isAuthenticated,(req,res)=>{
+      id_participante=req.user.dni
+      modelact.getActividad(function(err,activity){
+        if(err) throw err
+        else
+        {
+          if(req.body.aceptar="aceptar")
+            modelact.apuntarseActividad(id_participante,activity[0],function(err,activity){
+                if(err) throw err;
+                else message: "Usuario apuntado a la actividad, aceptando las condiciones"
+            })
+          else
+            model.bajaActividad(id_participante,activity[0],function(err,activity){
+              if(err) throw err;
+              else message: "Usuario se da de baja de la actividad"
+            })
+          res.redirect('/home?seccion=listado');
+        }
+      })
+    })
 
     router.post('/nuevaactividad',isAuthenticated,(req,res)=>{
       modelact.insertActividad(req.body,function(err,rows){
