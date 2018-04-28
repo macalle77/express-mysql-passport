@@ -16,19 +16,38 @@ connection = mysql.createConnection(
 var actModel = {};
 
 //comprobar si usuario esta apuntado a una actividad ó no
-actModel.comprobarEstadoActividad = function(partData,actData){
+actModel.comprobarEstadoActividad = function(partData,actData,callback){
 	if(connection){
 		sql='SELECT * from Participantes WHERE id_usuario= '+connection.escape(partData)+
 		'AND id_actividad='+connection.escape(actData)
 		connection.query(sql,function(error,result){
 			if(error) callback(error,null)
 			else {
-				if(result.length>0) return 1;
-				else return 0;
+				if(result.length>0) callback(null,true);
+				else callback(null,false);
 			}
 		})
 	}
 }
+
+
+/*actModel.comprobarEstadoActividad = function(partData,actData){
+	if(connection){
+		sql='SELECT * from Participantes WHERE id_usuario= '+connection.escape(partData)+
+		'AND id_actividad='+connection.escape(actData)
+		var valor=(function(){
+			connection.query(sql,function(error,result){
+				if(error) throw error
+				else {
+					if(result.length>0) return false;
+					else return true;
+				}
+			})
+		})()
+		console.log("valor desde funcion:"+valor())
+		//return valor();
+	}
+}*/
 
 //asignar actividad a usuario desde secretaria
 actModel.apuntarActividad = function(partData,actData,callback){
