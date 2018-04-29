@@ -58,7 +58,7 @@ userModel.getUserDni = function(dni,callback)
 {
 	if (connection)
 	{
-		var sql = 'SELECT * FROM Usuarios WHERE dni ='+connection.escape(dni);
+		var sql = 'SELECT * FROM Usuarios WHERE dni='+connection.escape(dni);
 		connection.query(sql, function(error, rows)
 		{
 			if(error)
@@ -67,7 +67,7 @@ userModel.getUserDni = function(dni,callback)
 			}
 			else
 			{
-			  console.log("SQL actualización:"+sql+"Resultado:"+rows.length+"nombre"+rows.nombre);
+			  console.log("SQL actualización:"+sql+"Resultado:"+rows.length+"nombre"+rows[0].nombre);
 
 				callback(null, rows);
 			}

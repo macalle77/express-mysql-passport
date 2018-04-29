@@ -12,9 +12,15 @@
          </button>
          <div class="collapse navbar-collapse" id="navbarSupportedContent">
            <ul class="navbar-nav mr-auto">
-              <li class="nav-item"><a class="nav-link" href="/home?seccion=gestion">Gestión Actividades</a></li>
-              <li class="nav-item active"><a class="nav-link" href="/home?seccion=listado">Gestión Participantes<span class="sr-only">(current)</span></a></li>
-              <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevo">Nuevo Participante</a></li>
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toogle" data-toggle="dropdown" href="/home?seccion=gestion">Gestión Actividades</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/home?seccion=listado_actual">Listado participantes</a>
+                    <a class="dropdown-item" href="/home?seccion=listado_pendientes">Listado pendientes</a>
+                  </div>
+              </li>
+              <li class="nav-item active"><a class="nav-link" href="/home?seccion=listado">Gestión Usuarios<span class="sr-only">(current)</span></a></li>
+              <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevo">Nuevo Usuario</a></li>
               <li class="nav-item"><a class="nav-link" href="/signout">Cerrar Sesión</a></li>
            </ul>
          </div>
@@ -38,13 +44,21 @@
       </form>
       </hr>
       <div class="table-responsive">
+      <% valor=accion%>
       <table class="table table-bordered table-hover table-condensed">
         <thead>
           <tr>
+            <%if (valor=='gestion'){%>
             <th>Eliminar</th>
             <th>Actualizar</th>
+            <%}%>
+            <%if (valor=='activos'){%>
             <th>Confirmar pago</th>
-            <th>Apuntar Actividad</th>
+            <th>Gestión Actividad</th>
+            <%}%>
+            <%if (valor=='pendientes'){%>
+            <th>Gestión Actividad</th>
+            <%}%>
             <th>#</th>
             <th>DNI</th>
             <th>Nombre</th>
@@ -55,23 +69,23 @@
           </tr>
         </thead>
         <tbody>
-            <% var valor;
-                for (var i = 0; i < users.length; i++) { %>
+            <% for (var i = 0; i < users.length; i++) { %>
                 <tr>
                   <% if (users[i].perfil=='participante'){%>
+                    <%if (valor=='gestion'){%>
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-href="/deleteuser/<%= users[i].dni%>" data-target="#borrarModal" data-id="#borrarModal">Borrar</button></td>
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal<%= users[i].dni%>" data-id="#editModal<%= users[i].dni%>">Actualizar</button></td>
-                    <td><a id="pagado" class="<%= users[i].pagado ? 'btn btn-success':'btn btn-dark'%>" href="/pagadouser/<%= users[i].dni%>">Pagado</a></td>
-                    <%
-                    gest_actividad.comprobarEstadoActividad( users[i].dni,actividad,function(error,result){
-                      console.log("Prueba:"+result)
-                      valor=result;
-                      console.log("Prueba1:"+valor)
-                    })
-                    %>
+                    <%}%>
+                    <%if (valor=='activos'){%>
+                    <td><a id="pagado" class="<%= users[i].pagado==1 ? 'btn btn-success':'btn btn-dark'%>" href="/confirmarpago/<%= users[i].dni%>">Pagado</a></td>
+                    <%}%>
                     <!--<td><a id="firmado" class="<%= users[i].firmado ? 'btn btn-success':'btn btn-dark'%>" href="/firmadouser/<%= users[i].dni%>">Firmado</a></td>-->
-                    <td><a id="apuntado" class="<%= valor ? 'btn btn-success':'btn btn-dark'%>" href="/asignaractividad/<%= users[i].dni%>">Apuntar</a></td>
-
+                    <%if (valor=='activos'){%>
+                    <td><a id="apuntado" class="<%=  true ? 'btn btn-success':'btn btn-dark'%>" href="/darbajaactividad/<%= users[i].dni%>">Dar de baja</a></td>
+                    <%}%>
+                    <%if (valor=='pendientes'){%>
+                    <td><a id="pendiente" class="<%=  true ? 'btn btn-success':'btn btn-dark'%>" href="/asignaractividad/<%= users[i].dni%>">Dar de alta</a></td>
+                    <%}%>
                     <td><%= i + 1 %></td>
                     <td><%= users[i].dni %></td>
                     <td><%= users[i].nombre %></td>
