@@ -28,25 +28,29 @@
        </div>
      </nav>
     <div class="container">
-      <form action="/filtrar" method="post">
+      <!--<form action="/filtrar" method="post">
         <legend>Buscar Usuario</legend>
         <div class="form-group">
+            <label for="dni" class="col-form-label">Dni</label>
             <input type="text" id="dni" class="form-control" name="dni"/>
         </div>
         <div class="form-group">
+          <label for="nombre" class="col-form-label">Nombre</label>
           <input type="text" id="nombre" class="form-control" name="nombre"/>
         </div>
         <div class="form-group">
+          <label for="apellidos" class="col-form-label">Apellidos</label>
           <input type="text" id="apellidos" class="form-control" name="apellidos"/>
         </div>
-        <button class="btn btn-primary">
-           Filtrar
-        </button>
-      </form>
+        <button class="btn btn-primary" type="submit">Filtrar</button>
+      </form>-->
+      <div class="form-group">
+         <input type="text" class="form-control pull-right" style="width:40%" id="search" placeholder="Escribe para buscar en la tabla...">
+      </div>
       </hr>
       <div class="table-responsive">
       <% valor=accion%>
-      <table class="table table-bordered table-hover table-condensed">
+      <table class="table table-bordered table-hover table-condensed" id="tablalistado">
         <thead>
           <tr>
             <th>Actualizar</th>
@@ -70,7 +74,7 @@
         <tbody>
             <% for (var i = 0; i < users.length; i++) { %>
                 <tr>
-                  <% if (users[i].perfil=='monitor' || users[i].perfil=='participante'){%>                    
+                  <% if (users[i].perfil=='monitor' || users[i].perfil=='participante'){%>
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal<%= users[i].dni%>" data-id="#editModal<%= users[i].dni%>">Actualizar</button></td>
                     <%if (valor=='activos'){%>
                     <td><a id="firmado" class="<%= users[i].firmado==1 ? 'btn btn-success':'btn btn-dark'%>" href="#">Firmado</a></td>
@@ -122,6 +126,7 @@
                                            <input type="text" name="direccion" id="direccion" class="form-control" value="<%= users[i].direccion %>" required/>
                                        </div>
                              <div class="modal-footer">
+                                   <input type="hidden" name="tipo_listado" value="<%= tipo_listado%>"
                                    <button type="button" class="btn btn-default" name="btncan" data-dismiss="modal">Cancelar</button>
                                    <button type="submit" class="btn btn-primary"name="btnMod">Guardar</button>
                              </div>
@@ -157,6 +162,20 @@
   <script>
   $('#borrarModal').on('show.bs.modal', function(e) {
     $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+  });
+
+  // Write on keyup event of keyword input element
+  $(document).ready(function(){
+    $("#search").keyup(function(){
+       _this = this;
+       // Show only matching TR, hide rest of them
+         $.each($("#tablalistado tbody tr"), function() {
+           if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+             $(this).hide();
+           else
+             $(this).show();
+         });
+     });
   });
   </script>
   </body>

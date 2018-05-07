@@ -6,8 +6,6 @@ var sleep=require('system-sleep');
 
 var modelact = require ('../model/actividad');
 
-var modelpart = require ('../model/participantes');
-
 var modeluser = require ('../model/user');
 
 var router=express.Router();
@@ -93,11 +91,10 @@ module.exports = function(passport){
           }
           else if(seccion=="listado_actual"){
             modelact.getActividad(function(err,activity){
-              modelpart.obtenerEstadoParticipantes(activity[0].id_actividad,function(error,listado){
+              modelact.obtenerEstadoParticipantes(activity[0].id_actividad,function(error,listado){
                 res.render('secrelistuser',{
                   title: 'Lista de usuarios',
                   accion: 'activos',
-                  tipo_listado: 'listado_actual',
                   users: listado
                 });
               })
@@ -105,11 +102,10 @@ module.exports = function(passport){
           }
           else if(seccion=="listado_pendientes"){
             modelact.getActividad(function(err,activity){
-              modelpart.obtenerEstadoParticipantesPendientes(activity[0].id_actividad,function(error,listado){
+              modelact.obtenerEstadoParticipantesPendientes(activity[0].id_actividad,function(error,listado){
                 res.render('secrelistuser',{
                   title: 'Lista de usuarios',
                   accion: 'pendientes',
-                  tipo_listado: 'listado_pendientes',
                   users: listado
                 });
               })
@@ -119,31 +115,9 @@ module.exports = function(passport){
             modeluser.getUsers(function(error,listado){
               res.render('secrelistuser',{
                 title: 'Lista de usuarios',
-                tipo_listado: 'listado',
                 accion: 'gestion',
                 users: listado
               });
-            })
-          }
-          else if(seccion=="listado_actividades"){
-            modelact.getActividades(function(error,listado){
-              res.render('listadoactividades',{
-                title: 'Lista de actividades',
-                tipo_listado: 'listado_actividades',
-                moment: moment,
-                actividades: listado
-              })
-            })
-          }
-          else if(seccion=="listado_actividades_filtro_fecha"){
-            console.log("desde:"+req.query.desde);
-            modelact.getActividadesFecha(req.query.desde,req.query.hasta,function(error,listado){
-              res.render('listadoactividades',{
-                title: 'Lista de actividades en el periodo',
-                tipo_listado: 'listado_actividades',
-                moment: moment,
-                actividades: listado
-              })
             })
           }
           else{
@@ -169,11 +143,10 @@ module.exports = function(passport){
           }
           else if(seccion=="listado_actual"){
             modelact.getActividad(function(err,activity){
-              modelpart.obtenerEstadoParticipantes(activity[0].id_actividad,function(error,listado){
+              modelact.obtenerEstadoParticipantes(activity[0].id_actividad,function(error,listado){
                 res.render('monlistuser',{
                   title: 'Lista de participantes',
                   accion: 'activos',
-                  tipo_listado: 'listado_actual',
                   users: listado
                 });
               })
@@ -181,11 +154,10 @@ module.exports = function(passport){
           }
           else if(seccion=="listado_pendientes"){
             modelact.getActividad(function(err,activity){
-              modelpart.obtenerEstadoParticipantesPendientes(activity[0].id_actividad,function(error,listado){
+              modelact.obtenerEstadoParticipantesPendientes(activity[0].id_actividad,function(error,listado){
                 res.render('monlistuser',{
                   title: 'Lista de usuarios no apuntados',
                   accion: 'pendientes',
-                  tipo_listado: 'listado_pendientes',
                   users: listado
                 });
               })
@@ -206,8 +178,8 @@ module.exports = function(passport){
                 monitores: usuarios,
                 title: 'Nueva Actividad',
                 message: req.flash('message')
-              })
-            })
+            });
+          });
           }
         });
       }
@@ -252,7 +224,7 @@ module.exports = function(passport){
       modelact.getActividad(function(err,activity){
         if(err) throw err
         else {
-            modelpart.apuntarActividad(id_participante,activity[0].id_actividad,function(err,activity){
+            modelact.apuntarActividad(id_participante,activity[0].id_actividad,function(err,activity){
               if(err) throw err;
               else message: "Usuario apuntado a la actividad"
             })
@@ -266,7 +238,7 @@ module.exports = function(passport){
       modelact.getActividad(function(err,activity){
         if(err) throw err
         else {
-            modelpart.darBajaActividad(id_participante,activity[0].id_actividad,function(err,activity){
+            modelact.darBajaActividad(id_participante,activity[0].id_actividad,function(err,activity){
               if(err) throw err;
               else message: "Usuario borrado de la actividad"
             })
@@ -280,7 +252,7 @@ module.exports = function(passport){
       modelact.getActividad(function(err,activity){
         if(err) throw err
         else{
-            modelpart.confirmarPagoActividad(id_participante,activity[0].id_actividad,function(err,result){
+            modelact.confirmarPagoActividad(id_participante,activity[0].id_actividad,function(err,result){
                 if(err) throw err;
                 else{
                   message: "Pago de usuario gestionado";
@@ -296,7 +268,7 @@ module.exports = function(passport){
       modelact.getActividad(function(err,activity){
         if(err) throw err
         else{
-            modelpart.firmarActividad(id_participante,activity[0].id_actividad,function(err,result){
+            modelact.firmarActividad(id_participante,activity[0].id_actividad,function(err,result){
                 if(err) throw err;
                 else{
                   message: "Firma de usuario gestionada";
@@ -315,14 +287,14 @@ module.exports = function(passport){
         else
         {
           if(req.body.aceptar=="aceptar")
-            modelpart.firmarActividad(id_participante,activity[0].id_actividad,function(err,result){
+            modelact.firmarActividad(id_participante,activity[0].id_actividad,function(err,result){
                 if(err) throw err;
                 else{
                   message: "Usuario apuntado a la actividad, aceptando las condiciones"
                 }
             })
           else
-            modelpart.darBajaActividad(id_participante,activity[0].id_actividad,function(err,activity){
+            modelact.darBajaActividad(id_participante,activity[0].id_actividad,function(err,activity){
               if(err) throw err;
               else{
                   message: "Usuario se da de baja de la actividad"
@@ -345,37 +317,43 @@ module.exports = function(passport){
       console.log("borrado");
       modeluser.deleteUser(id,function(err,rows){
         if(err) throw err;
-        else{
-          if(req.body.tipo_listado=="listado_pendientes")
-              res.redirect('/home?seccion=listado_pendientes');
-          else if(req.body.tipo_listado=="listado_actual")
-              res.redirect('/home?seccion=listado_actual');
-          else res.redirect('/home?seccion=listado');
-        }
+        res.redirect('/home?seccion=listado');
       })
     });
 
     router.post('/updateuser',isAuthenticated,(req,res)=> {
-        console.log("Valor req:"+req.body.nombre+"***"+req.body.tipo_listado);
+        console.log("Valor req:"+req.body.nombre);
         modeluser.updateUser(req.body,function(err,rows){
           if(err) throw err;
           else{
-              if(req.body.tipo_listado=="listado_pendientes")
-                  res.redirect('/home?seccion=listado_pendientes');
-              else if(req.body.tipo_listado=="listado_actual")
-                  res.redirect('/home?seccion=listado_actual');
-              else res.redirect('/home?seccion=listado');
+            if(req.user.perfil=="monitor")
+              res.redirect('/home?seccion=listado_actual')
           }
         })
     });
 
-    router.post('/filtrarfecha',isAuthenticated,(req,res)=> {
-         res.redirect('/home?seccion=listado_actividades_filtro_fecha&desde='+req.body.desde+'&hasta='+req.body.hasta);
-    })
+    router.post('/add',isAuthenticated ,(req, res) => {
+      let body=req.body;
+      body.status=false;
+      console.log ("nuevo");
+      console.log("Mensaje sesion add:"+req.user.username)
+      modeluser.create(body, (err, task) => {
+        if(err) throw err;
+        res.redirect('/home');
+       });
+    });
 
-    router.post('/listado_actividades',isAuthenticated,(req,res)=> {
-         res.redirect('/home?seccion=listado_actividades');
-    })
+    router.get('/turn/:id', isAuthenticated, (req, res)=> {
+      let id=req.params.id;
+      console.log("cambio");
+      modeluser.findById(id, (err,task)=>{
+        if(err) throw err;
+        task.status = !task.status;
+        task.save()
+          .then(() => res.redirect('/home'))
+      });
+    });
+
     /* Logout */
     router.get('/signout', function(req, res) {
       req.logout();

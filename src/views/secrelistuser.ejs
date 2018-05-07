@@ -17,6 +17,7 @@
                   <div class="dropdown-menu">
                     <a class="dropdown-item" href="/home?seccion=listado_actual">Listado participantes</a>
                     <a class="dropdown-item" href="/home?seccion=listado_pendientes">Listado pendientes</a>
+                    <a class="dropdown-item" href="/home?seccion=listado_actividades">Listado actividades</a>
                   </div>
               </li>
               <li class="nav-item active"><a class="nav-link" href="/home?seccion=listado">Gestión Usuarios<span class="sr-only">(current)</span></a></li>
@@ -26,26 +27,14 @@
          </div>
        </div>
      </nav>
-    <div class="container">
-      <form action="/filtrar" method="post">
-        <legend>Buscar Usuario</legend>
-        <div class="form-group">
-            <input type="text" id="dni" class="form-control" name="dni"/>
-        </div>
-        <div class="form-group">
-          <input type="text" id="nombre" class="form-control" name="nombre"/>
-        </div>
-        <div class="form-group">
-          <input type="text" id="apellidos" class="form-control" name="apellidos"/>
-        </div>
-        <button class="btn btn-primary">
-           Filtrar
-        </button>
-      </form>
+    <div class="container">    
+      <div class="form-group">
+         <input type="text" class="form-control pull-right" style="width:40%" id="search" placeholder="Escribe para buscar en la tabla...">
+      </div>
       </hr>
       <div class="table-responsive">
       <% valor=accion%>
-      <table class="table table-bordered table-hover table-condensed">
+      <table class="table table-bordered table-hover table-condensed" id="tablalistado">
         <thead>
           <tr>
             <%if (valor=='gestion'){%>
@@ -129,6 +118,7 @@
                                          <input type="text" name="direccion" id="direccion" class="form-control" value="<%= users[i].direccion %>" required/>
                                      </div>
                            <div class="modal-footer">
+                                 <input type="hidden" name="tipo_listado" value="<%= tipo_listado%>"
                                  <button type="button" class="btn btn-default" name="btncan" data-dismiss="modal">Cancelar</button>
                                  <button type="submit" class="btn btn-primary"name="btnMod">Guardar</button>
                            </div>
@@ -162,6 +152,20 @@
   <script>
   $('#borrarModal').on('show.bs.modal', function(e) {
     $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+  });
+
+  // Write on keyup event of keyword input element
+  $(document).ready(function(){
+    $("#search").keyup(function(){
+       _this = this;
+       // Show only matching TR, hide rest of them
+         $.each($("#tablalistado tbody tr"), function() {
+           if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+             $(this).hide();
+           else
+             $(this).show();
+         });
+     });
   });
   </script>
   </body>

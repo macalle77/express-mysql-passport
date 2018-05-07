@@ -142,6 +142,8 @@ userModel.updateUser = function(userData, callback)
 	//console.log(userData); return;
 	if(connection)
 	{
+		var perfil=null
+		if(userData.perfil==null) userData.perfil='participante';
 		var sql = 'UPDATE Usuarios SET nombre = ' + connection.escape(userData.nombre) + ',' +
 		'apellidos = ' + connection.escape(userData.apellidos) + ','+
 		'telefono = ' + connection.escape(userData.telefono) + ',' +
