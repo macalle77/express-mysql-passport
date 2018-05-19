@@ -127,7 +127,7 @@ module.exports = function(passport){
           }
           else if(seccion=="listado_actividades"){
             modelact.getActividades(function(error,listado){
-              res.render('listadoactividades',{
+              res.render('listadoactividadessecre',{
                 title: 'Lista de actividades',
                 tipo_listado: 'listado_actividades',
                 moment: moment,
@@ -138,7 +138,7 @@ module.exports = function(passport){
           else if(seccion=="listado_actividades_filtro_fecha"){
             console.log("desde:"+req.query.desde);
             modelact.getActividadesFecha(req.query.desde,req.query.hasta,function(error,listado){
-              res.render('listadoactividades',{
+              res.render('listadoactividadessecre',{
                 title: 'Lista de actividades en el periodo',
                 tipo_listado: 'listado_actividades',
                 moment: moment,
@@ -198,6 +198,27 @@ module.exports = function(passport){
                 actividad:activity[0],
                 message: req.flash('message')
               });
+            })
+          }
+          else if(seccion=="listado_actividades"){
+            modelact.getActividades(function(error,listado){
+              res.render('listadoactividadesmon',{
+                title: 'Lista de actividades',
+                tipo_listado: 'listado_actividades',
+                moment: moment,
+                actividades: listado
+              })
+            })
+          }
+          else if(seccion=="listado_actividades_filtro_fecha"){
+            console.log("desde:"+req.query.desde);
+            modelact.getActividadesFecha(req.query.desde,req.query.hasta,function(error,listado){
+              res.render('listadoactividadesmon',{
+                title: 'Lista de actividades en el periodo',
+                tipo_listado: 'listado_actividades',
+                moment: moment,
+                actividades: listado
+              })
             })
           }
           else{
