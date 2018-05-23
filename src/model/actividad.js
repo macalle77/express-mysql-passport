@@ -32,10 +32,12 @@ actModel.insertActividad = function(actData,callback)
 {
 	if (connection)
 	{
-    sql='INSERT INTO Actividad (titulo,descripcion,requisitos,fecha) VALUES(' + connection.escape(actData.titulo)+','+
+    sql='INSERT INTO Actividad (titulo,descripcion,requisitos,fecha,inicio_inscripcion,fin_inscripcion) VALUES(' + connection.escape(actData.titulo)+','+
     connection.escape(actData.descripcion)+','+
     connection.escape(actData.requisitos)+','+
-    connection.escape(actData.fecha)+')'
+    connection.escape(actData.fecha)+','+
+		connection.escape(actData.inicio)+','+
+		connection.escape(actData.fin)+')'
 
     console.log("Insertar nueva actividad:"+sql);
 
@@ -50,10 +52,17 @@ actModel.insertActividad = function(actData,callback)
         //devolvemos la última id insertada
         var lastAct=result.insertId;
         console.log('Ultimo id de actividad insertada:'+lastAct);
-        sql='INSERT INTO Organizar (id_actividad,id_monitor,inicio_actividad, fin_actividad) VALUES (' + lastAct + ',' +
-        connection.escape(actData.monitores) + ','+
-        connection.escape(actData.inicio)+','+
-        connection.escape(actData.fin)+')'
+
+				/*	var monitor=actData.monitores;
+					var valores;
+					valores="("+lastAct+","+monitor[0]+")"
+					if(monitor.length>1){
+        		for(var i=1; i<monitor.length;i++){
+							valores+=",("+lastAct+","+monitor[i]+")"
+						}
+					}
+
+				sql='INSERT INTO Organizar (id_actividad,id_monitor) VALUES ' + valores
 
         console.log('Consulta de insercion en organizar:'+sql);
         connection.query(sql,function(error, result){
@@ -65,49 +74,126 @@ actModel.insertActividad = function(actData,callback)
     			{
             callback(null,{"insertId" : result.insertId});
           }
-        })
+        })*/
 			}
-		});
+		})
 	}
 }
 
 //obtener actividad activa, estamos dentro del periodo de inscripcion
-actModel.getActividad = function(callback)
-{
+actModel.getActividad = function(callback){
   var fecha_actual=moment().format('YYYY-MM-DD');
   console.log('Fecha actual:'+fecha_actual);
   if (connection){
-     sql="select id_actividad from Organizar where inicio_actividad<='"+
-     fecha_actual +"' and fin_actividad>='"+ fecha_actual+"'";
-     console.log("consultar fecha:"+sql)
+     sql="select * from Actividad where inicio_inscripcion<='"+
+     fecha_actual +"' and fin_inscripcion>='"+ fecha_actual+"'";
+     console.log("consultar actividad en periodo:"+sql)
      connection.query(sql,function(error, result){
-       if(error) throw error;
+       if(error) callback(error,null);
        else
        {
-         console.log("valor de result:"+result.length)
-         sql='select * from Actividad where id_actividad='+connection.escape(result[0].id_actividad)
-         console.log("consultar actividad:"+sql)
-         connection.query(sql,function(error, result){
-           if(error) throw error;
-           else callback(null, result);
-         });
+        callback(null, result);
        }
      })
   }
 }
 
 //obtener listado de actividades por fecha
-actModel.getActividadesFecha = function(desde,hasta,callback)
-{
+actModel.getActividadesFecha = function(desde,hasta,callback){
   if (connection){
      sql="select * from Actividad where fecha>='"+
      desde +"' and fecha<='"+ hasta +"'";
      console.log("consultar fecha actividad concreta:"+sql)
      connection.query(sql,function(error, result){
-       if(error) throw error;
+       if(error) callback(error,null);
        else callback(null, result);
      });
   }
+}
+
+//obtener listado con información de los monitores participantes en la actividad activa
+actModel.getMonitoresParticipantes = function(callback){
+	if(connection){
+		var fecha_actual=moment().format('YYYY-MM-DD');
+		sql="select * from Actividad where inicio_inscripcion<='"+
+		fecha_actual +"' and fin_inscripcion>='"+ fecha_actual+"'";
+		connection.query(sql,function(error, actividad){
+			if(error) callback(error,null);
+			else
+			{
+				sql="select DISTINCT dni as dni,nombre,apellidos,telefono,email from Usuarios inner join Organizar on "+
+				"Usuarios.dni=Organizar.id_monitor where id_actividad="+actividad[0].id_actividad
+				console.log("******SQL MONITORES1:"+sql);
+				connection.query(sql,function(error,result){
+					if(error) callback(error,null);
+					else{
+						console.log("consulta1 ejecutada con exito");
+						callback(null, result);
+					}
+				})
+			}
+		})
+	}
+}
+
+//obtener listado con información de los monitores no participantes en la actividad activa
+actModel.getMonitoresNoParticipantes = function(callback){
+	if(connection){
+		var fecha_actual=moment().format('YYYY-MM-DD');
+		sql="select * from Actividad where inicio_inscripcion<='"+
+		fecha_actual +"' and fin_inscripcion>='"+ fecha_actual+"'";
+		connection.query(sql,function(error, actividad){
+			if(error) callback(error,null);
+			else
+			{
+				sql="SELECT DISTINCT dni as dni ,nombre,apellidos,telefono,email FROM Usuarios left join Organizar on Usuarios.dni=Organizar.id_monitor"+
+				" where perfil='monitor' and dni not in (select id_monitor from Organizar where id_actividad="+actividad[0].id_actividad+")"
+				console.log("******SQL MONITORES2:"+sql);
+				connection.query(sql,function(error,result){
+					if(error) callback(error,null);
+					else{
+						console.log("consulta2 ejecutada con exito");
+						callback(null, result);
+					}
+				})
+			}
+		})
+	}
+}
+
+actModel.organizarActividadMonitor =function(id_monitor,id_actividad,callback){
+	if(connection){
+		sql='INSERT INTO Organizar (id_actividad,id_monitor) VALUES ('+
+		id_actividad+','+id_monitor+')';
+		console.log('Consulta de insercion en organizar:'+sql);
+		connection.query(sql,function(error, result){
+			if(error)
+			{
+				callback(error,null);
+			}
+			else
+			{
+				callback(null,{"insertId" : result.insertId});
+			}
+		})
+	}
+}
+
+actModel.finOrganizarActividadMonitor =function(id_monitor,id_actividad,callback){
+	if(connection){
+		sql='DELETE FROM Organizar where id_actividad='+id_actividad+ ' and id_monitor='+id_monitor;
+		console.log('Consulta de borrado en organizar:'+sql);
+		connection.query(sql,function(error, result){
+			if(error)
+			{
+				callback(error,null);
+			}
+			else
+			{
+				callback(null,{"deleteId" : result.deleteId});
+			}
+		})
+	}
 }
 
 module.exports = actModel;

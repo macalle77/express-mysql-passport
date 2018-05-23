@@ -78,7 +78,9 @@ module.exports = function(passport){
           else{
             res.render('adminlistuser',{
               title: 'Lista de usuarios',
-              users:users
+              users:users,
+              mensajeRegistroError: req.flash('mensajeRegistroError'),
+              mensajeRegistro: req.flash('mensajeRegistro')
             });
           }
         });
@@ -196,6 +198,9 @@ module.exports = function(passport){
               res.render('mongestactividad',{
                 title: 'Gestionar Actividades',
                 actividad:activity[0],
+                fecha_actividad: moment(activity[0].fecha).format('YYYY-MM-DD'),
+                inicio_inscripcion: moment(activity[0].inicio_inscripcion).format('YYYY-MM-DD'),
+                fin_inscripcion:moment(activity[0].fin_inscripcion).format('YYYY-MM-DD'),
                 message: req.flash('message')
               });
             })
@@ -218,6 +223,17 @@ module.exports = function(passport){
                 tipo_listado: 'listado_actividades',
                 moment: moment,
                 actividades: listado
+              })
+            })
+          }
+          else if(seccion=="listado_monitores"){
+            modelact.getMonitoresParticipantes(function(error,listado1){
+              modelact.getMonitoresNoParticipantes(function(error,listado2){
+                res.render('monlistmonitor',{
+                  title: 'Lista de monitores organizadores',
+                  organizadores: listado1,
+                  noorganizadores: listado2
+                });
               })
             })
           }
@@ -379,16 +395,57 @@ module.exports = function(passport){
     router.post('/updateuser',isAuthenticated,(req,res)=> {
         console.log("Valor req:"+req.body.nombre+"***"+req.body.tipo_listado);
         modeluser.updateUser(req.body,function(err,rows){
-          if(err) throw err;
-          else{
-              if(req.body.tipo_listado=="listado_pendientes")
-                  res.redirect('/home?seccion=listado_pendientes');
-              else if(req.body.tipo_listado=="listado_actual")
-                  res.redirect('/home?seccion=listado_actual');
-              else res.redirect('/home?seccion=listado');
+          if(err){
+             console.log('Error en la actualización')
+             req.flash('mensajeRegistroError','Asegurate que los nuevos datos no se corresponden, con el mismo DNI, nombre y apellidos ó correo electrónico');
+             //throw err;
           }
+          else {
+            req.flash('mensajeRegistro','Usuario actualizado');
+          }
+          if(req.body.tipo_listado=="listado_pendientes")
+                res.redirect('/home?seccion=listado_pendientes');
+          else if(req.body.tipo_listado=="listado_actual")
+                res.redirect('/home?seccion=listado_actual');
+          else res.redirect('/home?seccion=listado');
         })
     });
+
+    router.get('/organizaractividad/:id',isAuthenticated,(req,res)=>{
+      let id=req.params.id;
+      modelact.getActividad(function(err,activity){
+        if(err) throw err
+        else
+        {
+          modelact.organizarActividadMonitor(id,activity[0].id_actividad,function(err,rows){
+            if(err) throw err;
+            else{
+              res.redirect('/home?seccion=listado_monitores');
+            }
+          })
+        }
+      })
+    })
+
+    router.get('/finorganizaractividad/:id',isAuthenticated,(req,res)=>{
+      let id=req.params.id;
+      modelact.getActividad(function(err,activity){
+        if(err) throw err
+        else
+        {
+          modelact.finOrganizarActividadMonitor(id,activity[0].id_actividad,function(err,rows){
+            if(err) throw err;
+            else{
+              res.redirect('/home?seccion=listado_monitores');
+            }
+          })
+        }
+      })
+    })
+
+    router.post('/listadomonitores',isAuthenticated,(req,res)=> {
+          res.redirect('/home?seccion=listado_monitores');
+    })
 
     router.post('/filtrarfecha',isAuthenticated,(req,res)=> {
          res.redirect('/home?seccion=listado_actividades_filtro_fecha&desde='+req.body.desde+'&hasta='+req.body.hasta);

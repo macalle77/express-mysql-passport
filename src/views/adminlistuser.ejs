@@ -36,9 +36,19 @@
           </div>
           <button class="btn btn-primary" type="submit">Filtrar</button>
         </form>-->
-        <div class="form-group">
-           <input type="text" class="form-control pull-right" style="width:40%" id="search" placeholder="Escribe para buscar en la tabla...">
-        </div>
+      <% if(mensajeRegistroError && mensajeRegistroError.length>0){%>
+      <div class="alert alert-danger" role"alert">
+        <%= mensajeRegistroError %>
+      </diV>
+        <% }%>
+      <% if(mensajeRegistro && mensajeRegistro.length>0){%>
+      <div class="alert alert-success" role"alert">
+        <%= mensajeRegistro %>
+      </diV>
+      <% }%>
+      <div class="form-group">
+         <input type="text" class="form-control pull-right" style="width:40%" id="search" placeholder="Escribe para buscar en la tabla...">
+      </div>
       </hr>
       <div class="table-responsive">
       <table class="table table-bordered table-hover table-condensed" id="tablalistado">
@@ -75,14 +85,16 @@
                 		  <div class="modal-dialog modal-lg" role="document">
                 					<div class="modal-content">
                 							<div class="modal-header">
-                							  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                							  <h4 class="modal-title" id="exampleModalLabel">Actualizar</h4>
+                                <h4 class="modal-title" id="exampleModalLabel">Actualizar</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                 </button>                							  
                 							</div>
                 							<div class="modal-body">
                 							   <form method="POST" action="/updateuser">
                                    <div class="form-group">
                                       <label for="dni" class="col-form-label">Dni</label>
-                                      <input type="text" name="dni" id="dni" class="form-control" value="<%= users[i].dni %>" required autofocus/>
+                                      <input type="text" name="dni" id="dni" class="form-control" value="<%= users[i].dni %>" readonly required autofocus/>
                                     </div>
                                     <div class="form-group">
                                        <label for="nombre" class="col-form-label">Nombre</label>
