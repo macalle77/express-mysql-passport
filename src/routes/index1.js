@@ -61,29 +61,6 @@ module.exports = function(passport){
       failureFlash : true
     }));
 
-    /* Recuperar password*/
-    router.get('/recordaruser',function(req,res){
-      res.render('recuperaracceso.ejs', {message:req.flash('message')})
-    })
-
-    router.post('/recoverpassword',function(req,res){
-      console.log('nuevo password para:'+req.query.email);
-      let email=req.body.email;
-      let mensaje=null;
-        modeluser.getUserEmail(email,function(err,user){
-          if(err){
-            mensaje='No existe este email registrado'
-            res.render('index',{message:mensaje})
-          }
-          else{
-            mensaje='Nuevo password enviado'
-            modeluser.updateUserPassword(email,function(err,user){
-                res.render('index',{message:mensaje})
-            })
-          }
-        })
-    })
-
     /* Handle Home Page and the rest*/
 
     router.get('/home', isAuthenticated, (req, res) => {
@@ -272,15 +249,14 @@ module.exports = function(passport){
         });
       }
       else{
+         modeluser.getUserDni(req.user.dni,function(err,usuario){
+          console.log("Seccion participante:"+usuario[0].dni);
           if(seccion=="gestionar"){
-            modeluser.getUserDni(req.user.dni,function(err,usuario){
-              res.render('pardatospersonales',{
-                title: 'Datos Personales',
-                user:usuario[0],
-                message: req.flash('message'),
-                mensajeRegistroError: req.flash('mensajeRegistroError')
-              });
-            })
+            res.render('pardatospersonales',{
+              title: 'Gestionar Actividades',
+              user:usuario[0],
+              message: req.flash('message')
+            });
           }
           else if(seccion=="nuevaactividad"){
             res.render('parnewactividad',{
@@ -300,11 +276,11 @@ module.exports = function(passport){
                 title: 'Datos Actividad',
                 actividad:activity[0],
                 fecha_actividad:fecha,
-                message: req.flash('message'),
-                mensajeRegistro: req.flash('mensajeRegistro')
+                message: req.flash('message')
               });
             })
           }
+        })
       }
     });
 
@@ -416,43 +392,23 @@ module.exports = function(passport){
       })
     });
 
-    router.post('/updatedatospersonales',isAuthenticated,(req,res)=> {
-        console.log("Valor req:"+req.body.nombre+"***"+req.body.tipo_listado+"***"+req.body.dni);
-        if(req.body.confpassword==req.body.nuevopassword){
-          modeluser.updateUser(req.body,function(err,rows){
-            if(err){
-              console.log('Error en la actualización datos personales')
-              req.flash('mensajeRegistroError','Asegurate que los nuevos datos no se corresponden, con el mismo DNI, nombre y apellidos ó correo electrónico');
-              res.redirect('/home?seccion=gestionar');
-            }
-            else {
-              req.flash('mensajeRegistro','Usuario actualizado');
-              res.redirect('/home?seccion=listado');
-            }
-          })
-        }
-        else if (req.body.confpassword!=req.body.nuevopassword){
-            req.flash('mensajeRegistroError','Asegurate que el password lo has escrito correctamente');
-            res.redirect('/home?seccion=gestionar');
-        }
-    });
-
     router.post('/updateuser',isAuthenticated,(req,res)=> {
-            console.log("Valor req:"+req.body.nombre+"***"+req.body.tipo_listado);
-            modeluser.updateUser(req.body,function(err,rows){
-              if(err){
-                 console.log('Error en la actualización')
-                 req.flash('mensajeRegistroError','Asegurate que los nuevos datos no se corresponden, con el mismo DNI, nombre y apellidos ó correo electrónico');
-              }
-              else {
-                req.flash('mensajeRegistro','Usuario actualizado');
-              }
-              if(req.body.tipo_listado=="listado_pendientes")
-                    res.redirect('/home?seccion=listado_pendientes');
-              else if(req.body.tipo_listado=="listado_actual")
-                    res.redirect('/home?seccion=listado_actual');
-              else res.redirect('/home?seccion=listado');
-            })
+        console.log("Valor req:"+req.body.nombre+"***"+req.body.tipo_listado);
+        modeluser.updateUser(req.body,function(err,rows){
+          if(err){
+             console.log('Error en la actualización')
+             req.flash('mensajeRegistroError','Asegurate que los nuevos datos no se corresponden, con el mismo DNI, nombre y apellidos ó correo electrónico');
+             //throw err;
+          }
+          else {
+            req.flash('mensajeRegistro','Usuario actualizado');
+          }
+          if(req.body.tipo_listado=="listado_pendientes")
+                res.redirect('/home?seccion=listado_pendientes');
+          else if(req.body.tipo_listado=="listado_actual")
+                res.redirect('/home?seccion=listado_actual');
+          else res.redirect('/home?seccion=listado');
+        })
     });
 
     router.get('/organizaractividad/:id',isAuthenticated,(req,res)=>{

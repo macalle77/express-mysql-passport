@@ -21,18 +21,23 @@
        </div>
      </nav>
     <div class="container">
+      <% if(mensajeRegistroError && mensajeRegistroError.length>0){%>
+      <div class="alert alert-danger" role"alert">
+        <%= mensajeRegistroError %>
+      </diV>
+        <% }%>
               <h1 class="text-center login-title">Datos personales de contacto</h1>
-                <form class="form-signin" action="/updateuser" method="POST">
+                <form class="form-signin" action="/updatedatospersonales" method="POST">
                   <div class="form-group row">
-                     <label for="dni" class="col-lg-2 col-form-label">Dni</label>
+                     <label for="dninew" class="col-lg-2 col-form-label">Dni</label>
                      <div class="col-lg-10">
-                       <input type="text" name="dni" id="dni" class="form-control" disabled value="<%= user.dni %>"/>
+                       <input type="text" name="dninew" id="dninew" class="form-control" autofocus required value="<%= user.dni %>"/>
                      </div>
                    </div>
                    <div class="form-group row">
                       <label for="nombre" class="col-lg-2 col-form-label">Nombre</label>
                       <div class="col-lg-10">
-                        <input type="text" name="nombre" id="nombre" class="form-control" autofocus required value="<%= user.nombre %>"/>
+                        <input type="text" name="nombre" id="nombre" class="form-control" required value="<%= user.nombre %>"/>
                       </div>
                     </div>
                     <div class="form-group row">
@@ -60,6 +65,18 @@
                           </div>
                         </div>
                         <div class="form-group row">
+                           <label for="nuevopassword" class="col-lg-2 col-form-label">Nuevo Password</label>
+                           <div class="col-lg-10">
+                             <input type="password" name="nuevopassword" id="nuevopassword" class="form-control" value=""/>
+                           </div>
+                         </div>
+                         <div class="form-group row">
+                            <label for="confpassword" class="col-lg-2 col-form-label">Confirmar Password</label>
+                            <div class="col-lg-10">
+                              <input type="password" name="confpassword" id="confpassword" class="form-control" value=""/>
+                            </div>
+                          </div>
+                        <div class="form-group row">
                           <div class="col-lg-6">
                               <input type="hidden" name="perfil" value="participante"/>
                               <input type="hidden" name="dni" value="<%= user.dni %>"/>
@@ -70,9 +87,6 @@
                           </div>
                         </div>
                 </form>
-                <% if(message){%>
-                  <h1 class="text-center error-message"><%= message %></h1>
-                <%}%>
               </div>
       </div>
   <% include footer %>

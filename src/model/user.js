@@ -1,4 +1,23 @@
 //llamamos al paquete mysql que hemos instalado
+var bCrypt = require('bcrypt-nodejs');
+
+//Generamos un password con las opciones que indiquemos
+var generator = require('generate-password');
+
+//Envio de correos electrónicos para gestionar accesos
+var nodemailer = require('nodemailer');
+// email sender function
+// Definimos el transporter
+var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+				tls: { rejectUnauthorized: false },
+        auth: {
+            user: 'macalleish@gmail.com',
+            pass: 'Calle.2017'
+        }
+});
+
+
 var mysql = require('mysql'),
 //creamos la conexion a nuestra base de datos con los datos de acceso de cada uno
 connection = mysql.createConnection(
@@ -9,6 +28,8 @@ connection = mysql.createConnection(
 		database : 'prueba'
 	}
 );
+
+
 
 //var connection = require ('../libs/config-mysql');
 
@@ -53,9 +74,30 @@ userModel.getUserPerfil= function(perfil, callback)
 	}
 }
 
+//obtenemos lista de usuarios con un email determinado
+userModel.getUserEmail= function(email, callback)
+{
+	if (connection)
+	{
+		var sql = 'SELECT * FROM Usuarios WHERE email ='+connection.escape(email);
+		connection.query(sql, function(error, rows)
+		{
+			if(error)
+			{
+				call(error,null);
+			}
+			else
+			{
+				callback(null, rows);
+			}
+		});
+	}
+}
+
 //obtenemos un usuario por su dni
 userModel.getUserDni = function(dni,callback)
 {
+	console.log("DNIIIII:"+dni)
 	if (connection)
 	{
 		var sql = 'SELECT * FROM Usuarios WHERE dni='+connection.escape(dni);
@@ -101,14 +143,18 @@ userModel.getUserEmail = function(email,callback)
 	if (connection)
 	{
 		var sql = 'SELECT * FROM Usuarios WHERE email = ' + connection.escape(email);
+		console.log("SQL EMAIL:"+sql)
 		connection.query(sql, function(error, row)
 		{
-			if(error)
+			if(error || row.length==0)
 			{
-				callback(error, row);
+				console.log("Mensaje error obtener usuario");
+				error='Usuario no existe con ese correo';
+				callback(error, null);
 			}
 			else
 			{
+				console.log("Mensaje obtener usuario ok!");
 				callback(null, row);
 			}
 		});
@@ -142,18 +188,35 @@ userModel.updateUser = function(userData, callback)
 	//console.log(userData); return;
 	if(connection)
 	{
-		var perfil=null
+		var sql=null;
 		if(userData.perfil==null) userData.perfil='participante';
-		var sql = 'UPDATE Usuarios SET nombre = ' + connection.escape(userData.nombre) + ',' +
-		'apellidos = ' + connection.escape(userData.apellidos) + ','+
-		'telefono = ' + connection.escape(userData.telefono) + ',' +
-		'direccion = ' + connection.escape(userData.direccion) + ',' +
-		'email = ' + connection.escape(userData.email) + ',' +
-		'perfil = ' + connection.escape(userData.perfil) +
-		' WHERE dni = ' + userData.dni;
+		if(userData.nuevopassword==""){
 
-		console.log('Consulta de actualización:'+sql);
+			sql = 'UPDATE Usuarios SET dni= '+ connection.escape(userData.dninew) + ',' +
+			'nombre = ' + connection.escape(userData.nombre) + ',' +
+			'apellidos = ' + connection.escape(userData.apellidos) + ','+
+			'telefono = ' + connection.escape(userData.telefono) + ',' +
+			'direccion = ' + connection.escape(userData.direccion) + ',' +
+			'email = ' + connection.escape(userData.email) + ',' +
+			'perfil = ' + connection.escape(userData.perfil) +
+			' WHERE dni = ' + connection.escape(userData.dni);
 
+			console.log('Consulta de actualización sin password:'+sql);
+		}
+		else{
+			passwordactualizado= createHash(userData.nuevopassword)
+			sql = 'UPDATE Usuarios SET dni= '+ connection.escape(userData.dninew) + ',' +
+			'nombre = ' + connection.escape(userData.nombre) + ',' +
+			'apellidos = ' + connection.escape(userData.apellidos) + ','+
+			'telefono = ' + connection.escape(userData.telefono) + ',' +
+			'direccion = ' + connection.escape(userData.direccion) + ',' +
+			'email = ' + connection.escape(userData.email) + ',' +
+			'perfil = ' + connection.escape(userData.perfil) + ',' +
+			'password =' + connection.escape(passwordactualizado)+
+			' WHERE dni = ' + connection.escape(userData.dni);
+
+			console.log('Consulta de actualización con password:'+sql);
+		}
 		connection.query(sql, function(error, result)
 		{
 			if(error)
@@ -162,6 +225,61 @@ userModel.updateUser = function(userData, callback)
 			}
 			else
 			{
+				callback(null,{"msg":"success"});
+			}
+		});
+	}
+}
+
+//actualizar un usuario
+userModel.updateUserPassword = function(email, callback)
+{
+	//console.log(userData); return;
+	if(connection)
+	{
+		//var passwordnew='1234'
+		var passwordnew=generator.generate({
+			length:7,
+			numbers: true
+		})
+
+		console.log("Password accesible:"+passwordnew)
+
+		var sql = "UPDATE Usuarios SET password = '" + createHash(passwordnew) + "'"+
+		" WHERE email = '" + email + "'";
+
+		connection.query(sql, function(error, result)
+		{
+
+			if(error || result.affectedRows==0)
+			{
+				console.log('Consulta de actualización1:'+sql+'actualizado1:'+result.affectedRows);
+				callback(error, null);
+			}
+			else
+			{
+				textemail="Gracias por tu participación en las actividades del club.\n"+
+				" Si este correo no va dirigido a tí, simplemente eliminalo.\n"+
+				" En otro caso, has solicitado para poder acceder a la web deberás de utilizar:\n\n"+
+				" Password:"+passwordnew+"\nSaludos Cordiales"
+				var mailOptions = {
+       		from: 'macalleish@gmail.com',
+       		to: email,
+       		subject: 'Solicitud de acceso a la web Club',
+       		text: textemail
+		 		}
+
+				transporter.sendMail(mailOptions, function(error, info){
+    			if (error){
+        		console.log(error)
+        		callback(error,null)
+    			} else {
+        		console.log("Email sent")
+        		callback(null,info)
+    			}
+				});
+
+				console.log('Consulta de actualización2:'+sql+'actualizado2:'+result.affectedRows);
 				callback(null,{"msg":"success"});
 			}
 		});
@@ -201,6 +319,10 @@ userModel.deleteUser = function(id, callback)
 			}
 		});
 	}
+}
+
+var createHash = function(password){
+		return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
 }
 
 //exportamos el objeto para tenerlo disponible en la zona de rutas

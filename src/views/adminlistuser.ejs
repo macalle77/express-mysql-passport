@@ -88,13 +88,13 @@
                                 <h4 class="modal-title" id="exampleModalLabel">Actualizar</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
-                                 </button>                							  
+                                 </button>
                 							</div>
                 							<div class="modal-body">
                 							   <form method="POST" action="/updateuser">
                                    <div class="form-group">
-                                      <label for="dni" class="col-form-label">Dni</label>
-                                      <input type="text" name="dni" id="dni" class="form-control" value="<%= users[i].dni %>" readonly required autofocus/>
+                                      <label for="dninew" class="col-form-label">Dni</label>
+                                      <input type="text" name="dninew" id="dninew" class="form-control" value="<%= users[i].dni %>" required autofocus/>
                                     </div>
                                     <div class="form-group">
                                        <label for="nombre" class="col-form-label">Nombre</label>
@@ -129,6 +129,7 @@
               							        <button type="button" class="btn btn-default" name="btncan" data-dismiss="modal">Cancelar</button>
               							        <button type="submit" class="btn btn-primary"name="btnMod">Guardar</button>
           							      </div>
+                              <input type="hidden" name="dni" value="<%= users[i].dni %>"/>
                               </form>
                 						 </div>
                 					</div>
