@@ -10,21 +10,22 @@ module.exports = function(passport){
         function(req, email, password, done) {
             // check in mongo if a user with email exists or not
             usermysql.getUserEmail(email,function(err,rows){
-              if(err)
-                return done(err);
-              if(rows.length > 0){
-                var user=rows[0];
-
-                if (!isValidPassword(user, password)){
+              if(err==null){
+                if(rows.length > 0){
+                  var user=rows[0];
+                  if (!isValidPassword(user, password)){
                     console.log('Password no valido');
-                    return done(null, false, req.flash('message', 'Password no valido')); // redirect back to login page
+                    return done(null, false, req.flash('message', 'Password no valido.')); // redirect back to login page
+                  }
+                  // User and password both match, return user from done method
+                  // which will be treated like success
+                  return done(null, user);
                 }
-                // User and password both match, return user from done method
-                // which will be treated like success
-                return done(null, user);
               }
-              console.log('Usuario no encontrado con el email'+email);
-              return done(null, false, req.flash('message', 'Usuario no encontrado.'));
+              else{
+                console.log('Usuario no encontrado con este email'+email);
+                return done(null, false, req.flash('message', 'Usuario no encontrado.'));
+              }
             });
         }
     ));

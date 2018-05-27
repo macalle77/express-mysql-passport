@@ -273,13 +273,14 @@ module.exports = function(passport){
       }
       else{
           if(seccion=="gestionar"){
-            modeluser.getUserDni(req.user.dni,function(err,usuario){
+            modeluser.getUserDni(req.user.dni,function(error,usuario){
+              console.log("Seccion participante:"+usuario[0].dni);
               res.render('pardatospersonales',{
                 title: 'Datos Personales',
                 user:usuario[0],
-                message: req.flash('message'),
+                //message: req.flash('message'),
                 mensajeRegistroError: req.flash('mensajeRegistroError')
-              });
+              })
             })
           }
           else if(seccion=="nuevaactividad"){
@@ -304,7 +305,7 @@ module.exports = function(passport){
                 mensajeRegistro: req.flash('mensajeRegistro')
               });
             })
-          }
+           }
       }
     });
 
@@ -422,7 +423,7 @@ module.exports = function(passport){
           modeluser.updateUser(req.body,function(err,rows){
             if(err){
               console.log('Error en la actualización datos personales')
-              req.flash('mensajeRegistroError','Asegurate que los nuevos datos no se corresponden, con el mismo DNI, nombre y apellidos ó correo electrónico');
+              req.flash('mensajeRegistroError','Problemas con los nuevos datos nombre y apellidos ó correo electrónico duplicados');
               res.redirect('/home?seccion=gestionar');
             }
             else {
@@ -432,7 +433,7 @@ module.exports = function(passport){
           })
         }
         else if (req.body.confpassword!=req.body.nuevopassword){
-            req.flash('mensajeRegistroError','Asegurate que el password lo has escrito correctamente');
+            req.flash('mensajeRegistroError','Asegurate que el password está confirmado');
             res.redirect('/home?seccion=gestionar');
         }
     });

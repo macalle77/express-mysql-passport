@@ -97,7 +97,6 @@ userModel.getUserEmail= function(email, callback)
 //obtenemos un usuario por su dni
 userModel.getUserDni = function(dni,callback)
 {
-	console.log("DNIIIII:"+dni)
 	if (connection)
 	{
 		var sql = 'SELECT * FROM Usuarios WHERE dni='+connection.escape(dni);
@@ -105,12 +104,11 @@ userModel.getUserDni = function(dni,callback)
 		{
 			if(error)
 			{
-				throw error;
+				callback(error,null);
 			}
 			else
 			{
 			  console.log("SQL actualización:"+sql+"Resultado:"+rows.length+"nombre"+rows[0].nombre);
-
 				callback(null, rows);
 			}
 		});
@@ -148,7 +146,7 @@ userModel.getUserEmail = function(email,callback)
 		{
 			if(error || row.length==0)
 			{
-				console.log("Mensaje error obtener usuario");
+				console.log("Mensaje error obtener usuario email");
 				error='Usuario no existe con ese correo';
 				callback(error, null);
 			}
@@ -189,12 +187,17 @@ userModel.updateUser = function(userData, callback)
 	if(connection)
 	{
 		var sql=null;
+    console.log("Nuevo Password:"+userData.nuevopassword)
 		if(userData.perfil==null) userData.perfil='participante';
-		if(userData.nuevopassword==""){
-
-			sql = 'UPDATE Usuarios SET dni= '+ connection.escape(userData.dninew) + ',' +
-			'nombre = ' + connection.escape(userData.nombre) + ',' +
-			'apellidos = ' + connection.escape(userData.apellidos) + ','+
+		if(userData.nuevopassword=="" || userData.nuevopassword==null){
+      if(userData.dninew==null){
+			  sql = 'UPDATE Usuarios SET nombre = ' + connection.escape(userData.nombre) + ','
+      }
+      else{
+        sql = 'UPDATE Usuarios SET dni= '+ connection.escape(userData.dninew) + ',' +
+        'nombre = ' + connection.escape(userData.nombre) + ','
+      }
+      sql=sql+'apellidos = ' + connection.escape(userData.apellidos) + ','+
 			'telefono = ' + connection.escape(userData.telefono) + ',' +
 			'direccion = ' + connection.escape(userData.direccion) + ',' +
 			'email = ' + connection.escape(userData.email) + ',' +
@@ -205,8 +208,8 @@ userModel.updateUser = function(userData, callback)
 		}
 		else{
 			passwordactualizado= createHash(userData.nuevopassword)
-			sql = 'UPDATE Usuarios SET dni= '+ connection.escape(userData.dninew) + ',' +
-			'nombre = ' + connection.escape(userData.nombre) + ',' +
+			//sql = 'UPDATE Usuarios SET dni= '+ connection.escape(userData.dninew) + ',' +
+      sql = 'UPDATE Usuarios SET nombre = ' + connection.escape(userData.nombre) + ',' +
 			'apellidos = ' + connection.escape(userData.apellidos) + ','+
 			'telefono = ' + connection.escape(userData.telefono) + ',' +
 			'direccion = ' + connection.escape(userData.direccion) + ',' +

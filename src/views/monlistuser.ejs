@@ -51,13 +51,14 @@
         </div>
         <button class="btn btn-primary" type="submit">Filtrar</button>
       </form>-->
-      <div class="form-group">
+      <!--<div class="form-group">
          <input type="text" class="form-control pull-right" style="width:40%" id="search" placeholder="Escribe para buscar en la tabla...">
       </div>
       </hr>
-      <div class="table-responsive">
+      <div class="table-responsive">-->
       <% valor=accion%>
-      <table class="table table-bordered table-hover table-condensed" id="tablalistado">
+      <!--<table class="table table-bordered table-hover table-condensed" id="tablalistado">-->
+      <table class="table table-striped table-responsive table-hover table-bordered display AllDataTables">
         <thead>
           <tr>
             <th>Actualizar</th>
@@ -80,8 +81,8 @@
         </thead>
         <tbody>
             <% for (var i = 0; i < users.length; i++) { %>
+              <% if (users[i].perfil=='monitor' || users[i].perfil=='participante'){%>
                 <tr>
-                  <% if (users[i].perfil=='monitor' || users[i].perfil=='participante'){%>
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal<%= users[i].dni%>" data-id="#editModal<%= users[i].dni%>">Actualizar</button></td>
                     <%if (valor=='activos'){%>
                     <td><a id="firmado" class="<%= users[i].firmado==1 ? 'btn btn-success':'btn btn-dark'%>" href="#">Firmado</a></td>
@@ -143,12 +144,12 @@
                          </div>
                    </div>
                   </div>
-                  <%}%>
-                  </tr>
-              <% } %>
+                </tr>
+              <%}%>
+            <%}%>
         </tbody>
       </table>
-     </div>
+    <!--</div>-->
     </div>
     <div class="modal fade" id="borrarModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -185,6 +186,38 @@
          });
      });
   });
+  </script>
+  <script src="/js/jquery.dataTables.min.js"></script>
+  <script src="/js/dataTables.bootstrap4.min.js"></script>
+  <script>
+      $(document).ready( function () {
+          $('.AllDataTables').DataTable({
+             language: {
+                   "sProcessing":     "Procesando...",
+                   "sLengthMenu":     "Mostrar _MENU_ registros",
+                   "sZeroRecords":    "No se encontraron resultados",
+                   "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                   "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                   "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                   "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                   "sInfoPostFix":    "",
+                   "sSearch":         "Buscar:",
+                   "sUrl":            "",
+                   "sInfoThousands":  ",",
+                   "sLoadingRecords": "Cargando...",
+                   "oPaginate": {
+                       "sFirst":    "Primero",
+                       "sLast":     "Último",
+                       "sNext":     "Siguiente",
+                       "sPrevious": "Anterior"
+                   },
+                   "oAria": {
+                       "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                       "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                   }
+             }
+          });
+      } );
   </script>
   </body>
 </html>
