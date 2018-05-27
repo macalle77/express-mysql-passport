@@ -49,9 +49,16 @@
                     para darte de baja de la misma.</p>
                 </div>
             </form>
-                <% if(message){%>
-                  <h1 class="text-center error-message"><%= message %></h1>
-                <%}%>
+            <% if(mensajeRegistro && mensajeRegistro.length>0){%>
+            <div class="alert alert-success" role"alert">
+              <%= mensajeRegistro %>
+            </diV>
+            <% }%>
+            <% if(mensajeRegistroError && mensajeRegistroError.length>0){%>
+            <div class="alert alert-error" role"alert">
+              <%= mensajeRegistroError %>
+            </diV>
+            <% }%>
       </div>
   <% include footer %>
   </body>

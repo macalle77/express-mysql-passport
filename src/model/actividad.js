@@ -15,6 +15,18 @@ connection = mysql.createConnection(
 //creamos un objeto para ir almacenando todo lo que necesitemos
 var actModel = {};
 
+//obtener actividad con identificador
+actModel.getActividadId = function (id,callback)
+{
+	if (connection){
+     sql="select * from Actividad where id_actividad="+id;
+     connection.query(sql,function(error, result){
+       if(error) callback(error,null)
+       else	callback(null, result[0]);
+     })
+  }
+}
+
 //obtener listado de Actividades
 actModel.getActividades = function (callback)
 {
@@ -87,15 +99,38 @@ actModel.getActividad = function(callback){
   if (connection){
      sql="select * from Actividad where inicio_inscripcion<='"+
      fecha_actual +"' and fin_inscripcion>='"+ fecha_actual+"'";
-     console.log("consultar actividad en periodo:"+sql)
      connection.query(sql,function(error, result){
-       if(error) callback(error,null);
+       if(error || result.length==0){
+				  console.log("Error no hay actividad activa")
+			 		callback(error,null);
+		 	 }
        else
        {
-        callback(null, result);
+        	callback(null, result);
        }
      })
   }
+}
+
+//Actualizar actividad
+actModel.updateActividad = function(dataAct,id,callback){
+	if(connection){
+		sql="update Actividad set descripcion="+connection.escape(dataAct.descripcion)+","+
+		" requisitos="+connection.escape(dataAct.requisitos)+","+
+		" fecha="+connection.escape(dataAct.fecha)+","+
+		" inicio_inscripcion="+connection.escape(dataAct.inicio)+","+
+		" fin_inscripcion="+connection.escape(dataAct.fin)+
+		" where id_actividad="+id
+		console.log("Actualización de actividad:"+sql)
+		connection.query(sql,function(error, result){
+			if(error)
+				callback(error,null);
+			else
+			{
+			 callback(null, result);
+			}
+		})
+	}
 }
 
 //obtener listado de actividades por fecha

@@ -43,10 +43,15 @@
              <div class="col-lg-10">
                <input type="date" name="fecha_actividad" id="fecha_actividad" value="<%=fecha_actividad%>" readonly /><br/>
              </div>
-           </div>          
+           </div>
            <% if(mensajeRegistro && mensajeRegistro.length>0){%>
            <div class="alert alert-success" role"alert">
              <%= mensajeRegistro %>
+           </diV>
+           <% }%>
+           <% if(mensajeRegistroError && mensajeRegistroError.length>0){%>
+           <div class="alert alert-error" role"alert">
+             <%= mensajeRegistroError %>
            </diV>
            <% }%>
     </div>

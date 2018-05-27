@@ -61,7 +61,7 @@
          <button type="submit" class="btn btn-primary"name="btnMod">Filtrar por fecha</button>
        </fieldset>
      </form>
-      <hr/>
+      <br/>
       <!--</br>
       <div class="form-group">
          <input type="text" class="form-control pull-right" style="width:40%" id="search" placeholder="Escribe para buscar en la tabla por el título...">
@@ -83,7 +83,7 @@
                 <tr>
                     <td><%= i + 1 %></td>
                     <td><%= actividades[i].titulo %></td>
-                    <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-id="#informacionModal<%= actividades[i].id_actividad%>" data-target="#informacionModal<%= actividades[i].id_actividad%>">Información Actividad</button></td>                    
+                    <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-id="#informacionModal<%= actividades[i].id_actividad%>" data-target="#informacionModal<%= actividades[i].id_actividad%>">Información Actividad</button></td>
                     <td><a id="informe" class="btn btn-primary btn-xs" href="/obtenerinforme/<%= actividades[i].id_actividad%>">Obtener Informe</a></td>
                   </tr>
                   <div class="modal fade bs-example-modal-sm" id="informacionModal<%= actividades[i].id_actividad%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

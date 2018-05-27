@@ -22,18 +22,23 @@
                  <li class="nav-item dropdown">
                      <a class="nav-link dropdown-toogle" data-toggle="dropdown" href="/home?seccion=listado_actividades">Gestión Actividades</a>
                      <div class="dropdown-menu">
+                       <% if(actividadActiva!=1){%>
+                         <a class="dropdown-item" href="/home?seccion=nuevaactividad">Nueva Actividad</a>
+                       <%}%>
                        <a class="dropdown-item" href="/home?seccion=listado_actividades">Listado actividades</a>
                        <a class="dropdown-item" href="/home?seccion=gestionar">Actividad actual</a>
                      </div>
                  </li>
                   <li class="nav-item"><a class="nav-link" href="/home?seccion=listado_monitores">Listado Monitores</a></li>
-                  <li class="nav-item active"><a class="nav-link" href="/home?seccion=nuevaactividad">Nueva Actividad<span class="sr-only">(current)</span></a></li>
                   <li class="nav-item"><a class="nav-link" href="/home?seccion=nuevo">Nuevo Participante</a></li>
                   <li class="nav-item"><a class="nav-link" href="/signout">Cerrar Sesión</a></li>
                </ul>
              </div>
            </div>
          </nav>
+         <% if(message){%>
+           <h1 class="text-center error-message"><%= message %></h1>
+         <%}%>
          <div class="container">
            <h1 class="text-center login-title">Nueva Actividad</h1>
             <form class="form-signin" action="/nuevaactividad" method="POST">
@@ -87,10 +92,7 @@
             </form>
             <form class="form-signin" action="/listadomonitores" method="POST">
                <button class="btn btn-lg btn-primary btn-block" type="submit">Listado de Monitores que organizan actividad</button>
-            </form>
-                <% if(message){%>
-                  <h1 class="text-center error-message"><%= message %></h1>
-                <%}%>
+            </form>              
            </div>
     <% include footer %>
   </body>

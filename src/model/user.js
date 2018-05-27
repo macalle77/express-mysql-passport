@@ -159,7 +159,6 @@ userModel.getUserEmail = function(email,callback)
 	}
 }
 
-
 //añadir un nuevo usuario
 userModel.insertUser = function(userData,callback)
 {

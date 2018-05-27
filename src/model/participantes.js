@@ -14,6 +14,22 @@ connection = mysql.createConnection(
 //creamos un objeto para ir almacenando todo lo que necesitemos
 var partModel = {};
 
+
+//Obtener información de participante en alguna actividades
+
+partModel.obtenerEstadoParticipante = function(usuario,actividad,callback){
+	if(connection){
+	sql="select * from Participantes where id_actividad="+connection.escape(actividad)+
+	" && id_usuario="+connection.escape(usuario)
+		connection.query(sql,function(error,result){
+			if(error) callback(error,null)
+			else {
+					callback(null,result);
+			}
+		})
+	}
+}
+
 //Obtener un listado con información de los participantes que no están apuntados
 partModel.obtenerEstadoParticipantesPendientes = function(actividad,callback){
 	if(connection){

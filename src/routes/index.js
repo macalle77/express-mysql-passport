@@ -189,92 +189,141 @@ module.exports = function(passport){
       }
       else if (req.user.perfil=="monitor") {
         console.log("Seccion monitor:"+seccion)
-        modeluser.getUsers(function(err,users){
-          if(seccion=="nuevo"){
-            res.render('monnewuser',{
-              title: 'Nuevo usuario',
-              message: req.flash('message')
-            });
-          }
-          else if(seccion=="listado_actual"){
-            modelact.getActividad(function(err,activity){
-              modelpart.obtenerEstadoParticipantes(activity[0].id_actividad,function(error,listado){
-                res.render('monlistuser',{
-                  title: 'Lista de participantes',
-                  accion: 'activos',
-                  tipo_listado: 'listado_actual',
-                  users: listado
-                });
-              })
-            })
-          }
-          else if(seccion=="listado_pendientes"){
-            modelact.getActividad(function(err,activity){
-              modelpart.obtenerEstadoParticipantesPendientes(activity[0].id_actividad,function(error,listado){
-                res.render('monlistuser',{
-                  title: 'Lista de usuarios no apuntados',
-                  accion: 'pendientes',
-                  tipo_listado: 'listado_pendientes',
-                  users: listado
-                });
-              })
-            })
-          }
-          else if(seccion=="gestionar"){
-            modelact.getActividad(function(err,activity){
-              res.render('mongestactividad',{
-                title: 'Gestionar Actividades',
-                actividad:activity[0],
-                fecha_actividad: moment(activity[0].fecha).format('YYYY-MM-DD'),
-                inicio_inscripcion: moment(activity[0].inicio_inscripcion).format('YYYY-MM-DD'),
-                fin_inscripcion:moment(activity[0].fin_inscripcion).format('YYYY-MM-DD'),
-                message: req.flash('message')
-              });
-            })
-          }
-          else if(seccion=="listado_actividades"){
+        modelact.getActividad(function(err,activity){
+          if(activity==null && seccion=='listado_actividades'){
+            actividadActiva=0
             modelact.getActividades(function(error,listado){
               res.render('listadoactividadesmon',{
                 title: 'Lista de actividades',
                 tipo_listado: 'listado_actividades',
                 moment: moment,
-                actividades: listado
+                actividades: listado,
+                actividadActiva: actividadActiva
               })
             })
           }
-          else if(seccion=="listado_actividades_filtro_fecha"){
-            console.log("desde:"+req.query.desde);
-            modelact.getActividadesFecha(req.query.desde,req.query.hasta,function(error,listado){
-              res.render('listadoactividadesmon',{
-                title: 'Lista de actividades en el periodo',
-                tipo_listado: 'listado_actividades',
-                moment: moment,
-                actividades: listado
-              })
-            })
-          }
-          else if(seccion=="listado_monitores"){
-            modelact.getMonitoresParticipantes(function(error,listado1){
-              modelact.getMonitoresNoParticipantes(function(error,listado2){
-                res.render('monlistmonitor',{
-                  title: 'Lista de monitores organizadores',
-                  organizadores: listado1,
-                  noorganizadores: listado2
-                });
-              })
+          else if(activity==null && seccion!='listado_actividades'){
+            actividadActiva=0
+            req.flash('message','Actualmente no hay ninguna actividad programada')
+            res.render('monnewactividad',{
+              //monitores: usuarios,
+              title: 'Nueva Actividad',
+              message: req.flash('message')
             })
           }
           else{
-            modeluser.getUserPerfil('monitor',function(err,usuarios){
-              res.render('monnewactividad',{
-                monitores: usuarios,
-                title: 'Nueva Actividad',
-                message: req.flash('message')
-              })
-            })
-          }
-        });
+              actividadActiva=1
+
+              if(seccion=="nuevo"){
+                res.render('monnewuser',{
+                  title: 'Nuevo usuario',
+                  message: req.flash('message'),
+                  actividadActiva: actividadActiva
+                });
+              }
+              else if(seccion=="listado_actual"){
+                modelact.getActividad(function(err,activity){
+                  modelpart.obtenerEstadoParticipantes(activity[0].id_actividad,function(error,listado){
+                    res.render('monlistuser',{
+                      title: 'Lista de participantes',
+                      accion: 'activos',
+                      tipo_listado: 'listado_actual',
+                      users: listado,
+                      actividadActiva: actividadActiva
+                    });
+                  })
+                })
+              }
+              else if(seccion=="listado_pendientes"){
+                modelact.getActividad(function(err,activity){
+                  modelpart.obtenerEstadoParticipantesPendientes(activity[0].id_actividad,function(error,listado){
+                    res.render('monlistuser',{
+                      title: 'Lista de usuarios no apuntados',
+                      accion: 'pendientes',
+                      tipo_listado: 'listado_pendientes',
+                      users: listado,
+                      actividadActiva: actividadActiva
+                    });
+                  })
+                })
+              }
+              else if(seccion=="gestionar"){
+                modelact.getActividad(function(err,activity){
+                  res.render('mongestactividad',{
+                    title: 'Gestionar Actividades',
+                    actividad:activity[0],
+                    fecha_actividad: moment(activity[0].fecha).format('YYYY-MM-DD'),
+                    inicio_inscripcion: moment(activity[0].inicio_inscripcion).format('YYYY-MM-DD'),
+                    fin_inscripcion:moment(activity[0].fin_inscripcion).format('YYYY-MM-DD'),
+                    message: req.flash('message'),
+                    mensajeRegistroError: req.flash('mensajeRegistroError'),
+                    actividadActiva: actividadActiva
+                  });
+                })
+              }
+              else if(seccion=="listado_actividades"){
+                modelact.getActividades(function(error,listado){
+                  res.render('listadoactividadesmon',{
+                    title: 'Lista de actividades',
+                    tipo_listado: 'listado_actividades',
+                    moment: moment,
+                    actividades: listado,
+                    actividadActiva: actividadActiva
+                  })
+                })
+              }
+              else if(seccion=="listado_actividades_filtro_fecha"){
+                console.log("desde:"+req.query.desde);
+                modelact.getActividadesFecha(req.query.desde,req.query.hasta,function(error,listado){
+                  res.render('listadoactividadesmon',{
+                    title: 'Lista de actividades en el periodo',
+                    tipo_listado: 'listado_actividades',
+                    moment: moment,
+                    actividades: listado,
+                    actividadActiva: actividadActiva
+                  })
+                })
+              }
+              else if(seccion=="listado_monitores"){
+                modelact.getMonitoresParticipantes(function(error,listado1){
+                  modelact.getMonitoresNoParticipantes(function(error,listado2){
+                    res.render('monlistmonitor',{
+                      title: 'Lista de monitores organizadores',
+                      organizadores: listado1,
+                      noorganizadores: listado2,
+                      mensajeRegistro: req.flash('mensajeRegistro'),
+                      actividadActiva: actividadActiva
+                    });
+                  })
+                })
+              }
+              else if(seccion=="nuevaactividad"){
+                  //modeluser.getUserPerfil('monitor',function(err,usuarios){
+                    res.render('monnewactividad',{
+                      //monitores: usuarios,
+                      title: 'Nueva Actividad',
+                      message: req.flash('message')
+                    })
+                  //})
+              }
+              else{
+                modelact.getActividad(function(err,activity){
+                console.log("Actividad actual......."+actividadActiva)
+                  res.render('mongestactividad',{
+                    title: 'Gestionar Actividades',
+                    actividad:activity[0],
+                    fecha_actividad: moment(activity[0].fecha).format('YYYY-MM-DD'),
+                    inicio_inscripcion: moment(activity[0].inicio_inscripcion).format('YYYY-MM-DD'),
+                    fin_inscripcion:moment(activity[0].fin_inscripcion).format('YYYY-MM-DD'),
+                    mensajeRegistroError: req.flash('mensajeRegistroError'),
+                    actividadActiva: actividadActiva
+                  });
+                })
+              }
+            }
+        })
       }
+      //Seccion de participante
       else{
           if(seccion=="gestionar"){
             modeluser.getUserDni(req.user.dni,function(error,usuario){
@@ -359,17 +408,30 @@ module.exports = function(passport){
 
     router.get('/firmadouser/:id',isAuthenticated,(req,res)=>{
       let id_participante=req.params.id;
-      modelact.getActividad(function(err,activity){
-        if(err) throw err
-        else{
-            modelpart.firmarActividad(id_participante,activity[0].id_actividad,function(err,result){
-                if(err) throw err;
-                else{
-                  message: "Firma de usuario gestionada";
-                }
-            })
-          if(req.user.perfil=="monitor") res.redirect('/home?seccion=listado');
-          else res.redirect('/home?seccion=listado_actual');
+      modelact.getActividad(function(error,activity){
+       if(activity==null){
+         req.flash('mensajeRegistroError','No hay ninguna actividad activa en este momento a la que apuntarte')
+         res.redirect('/home')
+       }
+       else{
+          modelpart.obtenerEstadoParticipante(id_participante,activity[0].id_actividad,function(error,activity){
+            if(activity==null){
+              req.flash('mensajeRegistroError','Debes de apuntarte previamente en secretaria')
+              res.redirect('/home')
+            }
+            else{
+                modelpart.firmarActividad(id_participante,activity[0].id_actividad,function(error,result){
+                  if(error==null){
+                      req.flash('mensajeRegistro','Acabas de firmar y aceptar las normas de la actividad')
+                      res.redirect('/home')
+                  }
+                  else{
+                      req.flash('mensajeRegistroError','Debes de apuntarte previamente en secretaria')
+                      res.redirect('/home')
+                  }
+                })
+             }
+           })
         }
       })
     })
@@ -403,6 +465,27 @@ module.exports = function(passport){
       modelact.insertActividad(req.body,function(err,rows){
           if(err) throw err;
           res.redirect('/home?seccion=listado');
+      })
+    })
+
+    router.post('/modificaractividad',isAuthenticated,(req,res)=>{
+      modelact.getActividad(function(error,activity){
+        if(activity==null) {
+          res.redirect('/home');
+        }
+        else{
+          modelact.updateActividad(req.body,activity[0].id_actividad,function(error,rows){
+            if(error){
+                console.log('Error en la actualización de la actividad')
+                req.flash('mensajeRegistroError','Problemas con la actualización de los datos de la actividad');
+                res.redirect('/home?seccion=gestionar');
+            }
+            else{
+              req.flash('mensajeRegistro','Actividad actualizada, elige los monitores');
+              res.redirect('/home?seccion=listado_monitores');
+            }
+          })
+        }
       })
     })
 
@@ -511,21 +594,23 @@ module.exports = function(passport){
 
           // draw some text
           doc.text('Listado de participantes...', 100, 20)
-          .fontSize(20)
+          .fontSize(12)
           .moveDown()
 
-          // and some justified text wrapped into columns
-          doc.text('prueba',{
-           width: 412,
-           align: 'justify',
-           indent: 30,
-           columns: 1,
-           height: 300
+          modelact.getActividad(function(error,actividad){
+            modelpart.obtenerEstadoParticipantes(actividad[0].id_actividad,function(error,usuarios){
+                    for(var i=0;i<usuarios.length;i++){
+                      doc.text(usuarios[i].nombre+' '+usuarios[i].apellidos,{
+                         width: 412,
+                         align: 'justify',
+                         columns: 1,
+                        })
+                        .font('Times-Roman', 12)
+                        .moveDown()
+                    }
+                    doc.end();
+              })
           })
-          .font('Times-Roman', 10)
-
-          // end and display the document in the iframe to the right
-          doc.end();
 
           res.statusCode = 200;
           res.setHeader('Content-type', 'application/pdf');
@@ -544,44 +629,92 @@ module.exports = function(passport){
     })
 
     router.get('/obtenerinforme/:id',isAuthenticated,(req,res)=> {
-          let id=req.params.id;
+          var id=req.params.id
           var doc = new pdf
           var stream = doc.pipe(blobStream());
 
-          // draw some text
-          doc.text('Informe de la actividad...', 100, 20)
-          .fontSize(20)
-          .moveDown()
+            modelact.getActividadId(id,function(error,actividad){
+              // draw some text
+              doc.text('Informe de la actividad...', 100, 20)
+              .fontSize(20)
+              .moveDown()
 
-          // and some justified text wrapped into columns
-          doc.text('prueba'+id,{
-           width: 412,
-           align: 'justify',
-           indent: 30,
-           columns: 1,
-           height: 300
-          })
-          .font('Times-Roman', 10)
+              // and some justified text wrapped into columns
+              doc.text(actividad.titulo+" realizada el "+actividad.fecha,{
+               width: 412,
+               align: 'justify',
+               indent: 30,
+               columns: 1,
+               height: 300
+              })
+              .font('Times-Roman', 12)
+              .moveDown()
 
-          // end and display the document in the iframe to the right
-          doc.end();
+              doc.text('Descripción:')
+              .fontSize(20)
+              .moveDown()
 
-          res.statusCode = 200;
-          res.setHeader('Content-type', 'application/pdf');
-          res.setHeader('Access-Control-Allow-Origin', '*');
+              doc.text(actividad.descripcion,{
+               width: 412,
+               align: 'justify',
+               indent: 30,
+               columns: 1,
+               height: 300
+              })
+              .font('Times-Roman', 12)
+              .moveDown()
 
-          // Header to force download
-          res.setHeader('Content-disposition', 'attachment; filename=Untitled.pdf');
+              doc.text('Requisitos:')
+              .fontSize(20)
+              .moveDown()
 
-          res.contentType('application/pdf');
-          doc.pipe(res)
+              doc.text(actividad.requisitos,{
+               width: 412,
+               align: 'justify',
+               indent: 30,
+               columns: 1,
+               height: 300
+              })
+              .font('Times-Roman', 12)
+              .moveDown()
+            })
 
-          /*stream.on('finish', function() {
-              url = stream.toBlobURL('application/pdf')
-              window.open(url)
-          });*/
+            modelpart.obtenerEstadoParticipantes(id,function(error,usuarios){
+                doc.addPage()
+
+                doc.text('Lista de participantes:', 100, 20)
+                .fontSize(20)
+                .moveDown()
+                  for(var i=0;i<usuarios.length;i++){
+                    doc.text(usuarios[i].nombre+' '+usuarios[i].apellidos,{
+                       width: 412,
+                       align: 'justify',
+                       columns: 1,
+                      })
+                      .font('Times-Roman', 12)
+                      .moveDown()
+                  }
+                  doc.end();
+              })
+
+              // fin y descarga del documento pdf
+
+
+              res.statusCode = 200;
+              res.setHeader('Content-type', 'application/pdf');
+              res.setHeader('Access-Control-Allow-Origin', '*');
+
+              // Header to force download
+              res.setHeader('Content-disposition', 'attachment; filename=Untitled.pdf');
+
+              res.contentType('application/pdf');
+              doc.pipe(res)
+
+              /*stream.on('finish', function() {
+                  url = stream.toBlobURL('application/pdf')
+                  window.open(url)
+              });*/
     })
-
     /* Logout */
     router.get('/signout', function(req, res) {
       req.logout();
