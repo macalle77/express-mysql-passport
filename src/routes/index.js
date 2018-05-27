@@ -10,6 +10,10 @@ var modelpart = require ('../model/participantes');
 
 var modeluser = require ('../model/user');
 
+var pdf = require('pdfkit');
+
+var blobStream = require('blob-stream');
+
 var router=express.Router();
 
 var isAuthenticated = function (req, res, next) {
@@ -499,6 +503,85 @@ module.exports = function(passport){
     router.post('/listado_actividades',isAuthenticated,(req,res)=> {
          res.redirect('/home?seccion=listado_actividades');
     })
+
+    router.post('/listadoparticipantes',isAuthenticated,(req,res)=> {
+
+          var doc = new pdf
+          var stream = doc.pipe(blobStream());
+
+          // draw some text
+          doc.text('Listado de participantes...', 100, 20)
+          .fontSize(20)
+          .moveDown()
+
+          // and some justified text wrapped into columns
+          doc.text('prueba',{
+           width: 412,
+           align: 'justify',
+           indent: 30,
+           columns: 1,
+           height: 300
+          })
+          .font('Times-Roman', 10)
+
+          // end and display the document in the iframe to the right
+          doc.end();
+
+          res.statusCode = 200;
+          res.setHeader('Content-type', 'application/pdf');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+
+          // Header to force download
+          res.setHeader('Content-disposition', 'attachment; filename=Untitled.pdf');
+
+          res.contentType('application/pdf');
+          doc.pipe(res)
+
+          /*stream.on('finish', function() {
+              url = stream.toBlobURL('application/pdf')
+              window.open(url)
+          });*/
+    })
+
+    router.get('/obtenerinforme/:id',isAuthenticated,(req,res)=> {
+          let id=req.params.id;
+          var doc = new pdf
+          var stream = doc.pipe(blobStream());
+
+          // draw some text
+          doc.text('Informe de la actividad...', 100, 20)
+          .fontSize(20)
+          .moveDown()
+
+          // and some justified text wrapped into columns
+          doc.text('prueba'+id,{
+           width: 412,
+           align: 'justify',
+           indent: 30,
+           columns: 1,
+           height: 300
+          })
+          .font('Times-Roman', 10)
+
+          // end and display the document in the iframe to the right
+          doc.end();
+
+          res.statusCode = 200;
+          res.setHeader('Content-type', 'application/pdf');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+
+          // Header to force download
+          res.setHeader('Content-disposition', 'attachment; filename=Untitled.pdf');
+
+          res.contentType('application/pdf');
+          doc.pipe(res)
+
+          /*stream.on('finish', function() {
+              url = stream.toBlobURL('application/pdf')
+              window.open(url)
+          });*/
+    })
+
     /* Logout */
     router.get('/signout', function(req, res) {
       req.logout();
