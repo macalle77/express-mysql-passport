@@ -78,7 +78,7 @@
         <tbody>
             <tr><td colspan="6">Organizando la excursión están</td></tr>
               <%if(organizadores.length==0){%>
-                 <tr><td colspan="6">No hay monitores para organizar la actividad....</td></tr>
+                 <tr><td colspan="6">No hay monitores organizando la actividad....</td></tr>
               <%}else{
                   for( var i = 0; i < organizadores.length; i++){%>
                       <tr><td><a id="participa" class="btn btn-dark" href="/finorganizaractividad/<%= organizadores[i].dni%>">Dejar la organización</a></td>

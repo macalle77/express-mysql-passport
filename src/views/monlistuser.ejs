@@ -83,7 +83,7 @@
         </thead>
         <tbody>
             <% for (var i = 0; i < users.length; i++) { %>
-              <% if (users[i].perfil=='monitor' || users[i].perfil=='participante'){%>
+              <% if (users[i].perfil=='participante'){%>
                 <tr>
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal<%= users[i].dni%>" data-id="#editModal<%= users[i].dni%>">Actualizar</button></td>
                     <%if (valor=='activos'){%>

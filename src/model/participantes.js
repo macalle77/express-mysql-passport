@@ -20,10 +20,14 @@ var partModel = {};
 partModel.obtenerEstadoParticipante = function(usuario,actividad,callback){
 	if(connection){
 	sql="select * from Participantes where id_actividad="+connection.escape(actividad)+
-	" && id_usuario="+connection.escape(usuario)
+	" and id_usuario="+connection.escape(usuario)
 		connection.query(sql,function(error,result){
-			if(error) callback(error,null)
+			if(error || result.length==0){
+				console.log("obtener estado participante no aceptado")
+				callback(error,null)
+			}
 			else {
+					console.log("obtener estado participante aceptado")
 					callback(null,result);
 			}
 		})
@@ -102,9 +106,9 @@ partModel.firmarActividad = function(partData,actData,callback){
 		connection.escape(actData)+" AND id_usuario=" +	connection.escape(partData)
 		console.log("Firmar actividad:"+sql)
 		connection.query(sql,function(error, result){
-			if(error) throw error;
+			if(error || result.length==0 ) callback(error,null)
 			else{
-			console.log("Valor d firmado:"+result[0].firmado)
+				console.log("Valor d firmado:"+result[0].firmado)
 				if(result[0].firmado==1)
 					sql1="UPDATE Participantes SET firmado=0 WHERE id_actividad="+
 					connection.escape(actData)+" AND id_usuario=" +	connection.escape(partData)
@@ -155,10 +159,16 @@ partModel.darBajaActividad = function(partData,actData,callback){
 	if(connection){
 		sql="DELETE FROM Participantes WHERE id_actividad=" +
 		connection.escape(actData)+" AND id_usuario=" +	connection.escape(partData)
-		console.log("consulta borrar de actividad:"+sql)
 		connection.query(sql,function(error, result){
-			if(error)	callback(error,null);
-			else callback(null,{"borrarId" : result});
+			var resultado=result
+			if(resultado.length>0){
+				callback(null,{"borrarId" : result});
+			}
+			else{
+				console.log("consulta borrar actividad:"+sql)
+				error="no existe ese participante"
+				callback(error,null)
+			}
 		})
 	}
 }
