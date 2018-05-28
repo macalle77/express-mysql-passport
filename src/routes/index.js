@@ -325,69 +325,69 @@ module.exports = function(passport){
       }
       //Seccion de participante
       else{
-      modelact.getActividad(function(error,actividad){
-        modelpart.obtenerEstadoParticipante(req.user.dni,actividad[0].id_actividad,function(err,result){
-        var existe=1
-        var firmado=0
-            if(result!=null){
-              if(result[0].firmado==1){
-                  console.log("ya has firmado")
-                  firmado=1
-              }
+      if(seccion=="gestionar"){
+          modeluser.getUserDni(req.user.dni,function(error,usuario){
+            console.log("Seccion participante:"+usuario[0].dni)
+            res.render('pardatospersonales',{
+              title: 'Datos Personales',
+              user:usuario[0],
+              existe:0,
+              //message: req.flash('message'),
+              mensajeRegistroError: req.flash('mensajeRegistroError')
+            })
+          })
+      } else {
+          modelact.getActividad(function(error,actividad){
+            if(actividad==null){
+              res.render('parnewactividad',{
+                title: 'Participación',
+                titulo: 'no',
+                existe: 0,
+                mensajeRegistroError: req.flash('mensajeRegistroError'),
+                mensajeRegistro: req.flash('mensajeRegistro')
+              })
             }
             else{
-              existe=0
-            }
-            if(seccion=="gestionar"){
-              modeluser.getUserDni(req.user.dni,function(error,usuario){
-                console.log("Seccion participante:"+usuario[0].dni)
-                res.render('pardatospersonales',{
-                  title: 'Datos Personales',
-                  user:usuario[0],
-                  existe:existe,
-                  //message: req.flash('message'),
-                  mensajeRegistroError: req.flash('mensajeRegistroError')
-                })
-              })
-            } else {
-                if(actividad==null) {
-                  res.render('parnewactividad',{
-                    title: 'Participación',
-                    titulo: 'no',
-                    existe: existe,
-                    mensajeRegistroError: req.flash('mensajeRegistroError'),
-                    mensajeRegistro: req.flash('mensajeRegistro')
-                  })
+              modelpart.obtenerEstadoParticipante(req.user.dni,actividad[0].id_actividad,function(err,result){
+                var existe=1
+                var firmado=0
+                if(result!=null){
+                  if(result[0].firmado==1){
+                  console.log("ya has firmado")
+                  firmado=1
+                  }
                 }
                 else{
-                  if(seccion=="nuevaactividad"){
-                       res.render('parnewactividad',{
-                          title: 'Participación',
-                          titulo:actividad[0].titulo,
-                          existe:existe,
-                          firmado:firmado,
-                          mensajeRegistroError: req.flash('mensajeRegistroError'),
-                          mensajeRegistro: req.flash('mensajeRegistro')
-                        });
-                   }
-                   else{
-                         fecha=moment(actividad[0].fecha).format('YYYY-MM-DD')
-                         res.render('parveractividad',{
-                           title: 'Datos Actividad',
-                           existe:existe,
-                           actividad:actividad[0],
-                           fecha_actividad:fecha,
-                           message: req.flash('message'),
-                           mensajeRegistroError: req.flash('mensajeRegistroError'),
-                           mensajeRegistro: req.flash('mensajeRegistro')
-                         });
-                   }
+                  existe=0
+                }
+                if(seccion=="nuevaactividad"){
+                   res.render('parnewactividad',{
+                    title: 'Participación',
+                    titulo:actividad[0].titulo,
+                    existe:existe,
+                    firmado:firmado,
+                    mensajeRegistroError: req.flash('mensajeRegistroError'),
+                    mensajeRegistro: req.flash('mensajeRegistro')
+                    });
                  }
-               }
-        })
+                 else{
+                   fecha=moment(actividad[0].fecha).format('YYYY-MM-DD')
+                    res.render('parveractividad',{
+                       title: 'Datos Actividad',
+                       existe:existe,
+                       actividad:actividad[0],
+                       fecha_actividad:fecha,
+                       message: req.flash('message'),
+                       mensajeRegistroError: req.flash('mensajeRegistroError'),
+                       mensajeRegistro: req.flash('mensajeRegistro')
+                     });
+                 }
+              })
+          }
       })
-     }
-    })
+    }
+    }
+  })
 
     router.get('/asignaractividad/:id',isAuthenticated,(req,res)=>{
       let id_participante=req.params.id;
