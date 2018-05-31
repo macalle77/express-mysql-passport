@@ -73,6 +73,7 @@
           <tr>
             <th>#</th>
             <th>Titulo</th>
+            <th>Fecha</th>
             <th>Información de Actividad</th>
             <th>Informe de Actividad</th>
           </tr>
@@ -83,6 +84,7 @@
                 <tr>
                     <td><%= i + 1 %></td>
                     <td><%= actividades[i].titulo %></td>
+                    <td><%= fecha_actividad %></td>
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-id="#informacionModal<%= actividades[i].id_actividad%>" data-target="#informacionModal<%= actividades[i].id_actividad%>">Información Actividad</button></td>
                     <td><a id="informe" class="btn btn-primary btn-xs" href="/obtenerinforme/<%= actividades[i].id_actividad%>">Obtener Informe</a></td>
                   </tr>

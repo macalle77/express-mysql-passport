@@ -37,7 +37,9 @@
            </div>
          </nav>
          <% if(message){%>
-           <h1 class="text-center error-message"><%= message %></h1>
+           <div class="alert alert-danger" role"alert">
+                 <%= message %>
+           </div>
          <%}%>
          <div class="container">
            <h1 class="text-center login-title">Nueva Actividad</h1>
@@ -92,7 +94,7 @@
             </form>
             <form class="form-signin" action="/listadomonitores" method="POST">
                <button class="btn btn-lg btn-primary btn-block" type="submit">Listado de Monitores que organizan actividad</button>
-            </form>              
+            </form>
            </div>
     <% include footer %>
   </body>

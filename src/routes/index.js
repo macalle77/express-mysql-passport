@@ -43,7 +43,22 @@ module.exports = function(passport){
 
     router.get('/', function(req, res) {
       // Display the Login page with any flash message, if any
-      res.render('index', { message: req.flash('message') });
+      modelact.getActividad(function(err,activity){
+        if(activity!=null){
+          moment.locale('es')
+          var fecha=moment(activity[0].fecha).format('dddd DD-MM-YYYY')
+            res.render('index', {
+              fecha: fecha,
+              actividad: activity[0],
+              message: req.flash('message')
+            });
+        }else{
+            res.render('index', {
+              actividad:null,
+              message: req.flash('message')
+            });
+        }
+      })
     });
 
       /* Handle Login POST */
@@ -122,26 +137,44 @@ module.exports = function(passport){
           }
           else if(seccion=="listado_actual"){
             modelact.getActividad(function(err,activity){
-              modelpart.obtenerEstadoParticipantes(activity[0].id_actividad,function(error,listado){
-                res.render('secrelistuser',{
-                  title: 'Lista de usuarios',
-                  accion: 'activos',
-                  tipo_listado: 'listado_actual',
-                  users: listado
+              if(activity==null){
+                req.flash('mensajeRegistroError','No hay ningúna actividad programada actualmente')
+                res.render('secregestactividad',{
+                  title: 'Gestionar Actividades',
+                  mensajeRegistroError: req.flash('mensajeRegistroError')
                 });
-              })
+              }
+              else{
+                modelpart.obtenerEstadoParticipantes(activity[0].id_actividad,function(error,listado){
+                  res.render('secrelistuser',{
+                    title: 'Lista de usuarios',
+                    accion: 'activos',
+                    tipo_listado: 'listado_actual',
+                    users: listado
+                  });
+                })
+              }
             })
           }
           else if(seccion=="listado_pendientes"){
             modelact.getActividad(function(err,activity){
-              modelpart.obtenerEstadoParticipantesPendientes(activity[0].id_actividad,function(error,listado){
-                res.render('secrelistuser',{
-                  title: 'Lista de usuarios',
-                  accion: 'pendientes',
-                  tipo_listado: 'listado_pendientes',
-                  users: listado
+              if(activity==null){
+                req.flash('mensajeRegistroError','No hay ningúna actividad programada actualmente')
+                res.render('secregestactividad',{
+                  title: 'Gestionar Actividades',
+                  mensajeRegistroError: req.flash('mensajeRegistroError')
                 });
-              })
+              }
+              else{
+                modelpart.obtenerEstadoParticipantesPendientes(activity[0].id_actividad,function(error,listado){
+                  res.render('secrelistuser',{
+                    title: 'Lista de usuarios',
+                    accion: 'pendientes',
+                    tipo_listado: 'listado_pendientes',
+                    users: listado
+                  });
+                })
+              }
             })
           }
           else if(seccion=="listado"){
@@ -176,14 +209,11 @@ module.exports = function(passport){
             })
           }
           else{
+            console.log("Error actividad no EXISTE")
+            req.flash('mensajeRegistroError','No hay ningúna actividad programada actualmente')
             res.render('secregestactividad',{
               title: 'Gestionar Actividades',
-              actividad:{
-                  titulo:'Actividad 1',
-                  descripcion:'Descripcion 1',
-                  requisitos: 'Requisitos 1'
-              },
-              message: req.flash('message')
+              mensajeRegistroError: req.flash('mensajeRegistroError')
             });
           }
       }

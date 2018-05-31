@@ -82,6 +82,7 @@
           <tr>
             <th>#</th>
             <th>Titulo</th>
+            <th>Fecha</th>
             <th>Información de Actividad</th>
           </tr>
         </thead>
@@ -91,6 +92,7 @@
                   <tr>
                     <td><%= i + 1 %></td>
                     <td><%= actividades[i].titulo %></td>
+                    <td><%= fecha_actividad %></td>
                     <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-id="#informacionModal<%= actividades[i].id_actividad%>" data-target="#informacionModal<%= actividades[i].id_actividad%>">Información Actividad</button></td>
                   </tr>
                   <div class="modal fade bs-example-modal-sm" id="informacionModal<%= actividades[i].id_actividad%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

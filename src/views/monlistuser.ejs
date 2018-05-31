@@ -63,7 +63,6 @@
       <table class="table table-striped table-responsive table-hover table-bordered display AllDataTables">
         <thead>
           <tr>
-            <th>Actualizar</th>
             <%if(valor=='activos'){%>
             <th>Confirmar firma</th>
             <th>Confirmar pago</th>
@@ -73,19 +72,19 @@
             <th>Gestionar</th>
             <%}%>
             <th>#</th>
-            <th>DNI</th>
+            <!--<th>DNI</th>-->
             <th>Nombre</th>
             <th>Apellidos</th>
             <th>Teléfono</th>
             <th>Dirección</th>
             <th>Email</th>
+            <th>Actualizar</th>
           </tr>
         </thead>
         <tbody>
             <% for (var i = 0; i < users.length; i++) { %>
               <% if (users[i].perfil=='participante'){%>
                 <tr>
-                    <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal<%= users[i].dni%>" data-id="#editModal<%= users[i].dni%>">Actualizar</button></td>
                     <%if (valor=='activos'){%>
                     <td><a id="firmado" class="<%= users[i].firmado==1 ? 'btn btn-success':'btn btn-dark'%>" href="#">Firmado</a></td>
                     <td><a id="pagado" class="<%= users[i].pagado==1 ? 'btn btn-success':'btn btn-dark'%>" href="/confirmarpago/<%= users[i].dni%>">Pagado</a></td>
@@ -95,12 +94,13 @@
                     <td><a id="pendiente" class="<%=  true ? 'btn btn-success':'btn btn-dark'%>" href="/asignaractividad/<%= users[i].dni%>">Dar de alta</a></td>
                     <%}%>
                     <td><%= i + 1 %></td>
-                    <td><%= users[i].dni %></td>
+                    <!--<td><%= users[i].dni %></td>-->
                     <td><%= users[i].nombre %></td>
                     <td><%= users[i].apellidos %></td>
                     <td><%= users[i].telefono %></td>
                     <td><%= users[i].direccion %></td>
                     <td><%= users[i].email %></td>
+                    <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal<%= users[i].dni%>" data-id="#editModal<%= users[i].dni%>">Actualizar</button></td>
                     <!--<td><a id="firmado" class="<%= users[i].firmado ? 'btn btn-success':'btn btn-dark'%>" href="/firmadouser/<%= users[i].dni%>">Firmado</a></td>-->
                     <div class="modal fade bs-example-modal-sm" id="editModal<%= users[i].dni%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                      <div class="modal-dialog modal-lg" role="document">
