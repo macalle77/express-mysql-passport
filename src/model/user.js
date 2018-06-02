@@ -17,8 +17,9 @@ var transporter = nodemailer.createTransport({
         }
 });
 
+var connection=require('../libs/config-mysql')
 
-var mysql = require('mysql'),
+/*var mysql = require('mysql')
 //creamos la conexion a nuestra base de datos con los datos de acceso de cada uno
 connection = mysql.createConnection(
 	{
@@ -27,7 +28,7 @@ connection = mysql.createConnection(
 		password :'miguel',
 		database : 'prueba'
 	}
-);
+);*/
 
 
 

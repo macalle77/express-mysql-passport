@@ -1,15 +1,17 @@
 var moment = require('moment');
 
-var mysql = require('mysql')
+var connection=require('../libs/config-mysql')
+
+//var mysql = require('mysql')
 //creamos la conexion a nuestra base de datos con los datos de acceso de cada uno
-connection = mysql.createConnection(
+/*connection = mysql.createConnection(
 	{
 		host : '192.168.56.102',
 		user : 'miguel',
 		password :'miguel',
 		database : 'prueba'
 	}
-);
+);*/
 
 //creamos un objeto para ir almacenando todo lo que necesitemos
 var partModel = {};
