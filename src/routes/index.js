@@ -443,6 +443,22 @@ module.exports = function(passport){
       })
     })
 
+    router.get('/confirmarasistenciaactividad/:id',isAuthenticated,(req,res)=>{
+      let id_participante=req.params.id;
+      modelact.getActividad(function(err,activity){
+        if(err) throw err
+        else{
+            modelpart.confirmarAsistenciaActividad(id_participante,activity[0].id_actividad,function(err,result){
+                if(err) throw err;
+                else{
+                  message: "Asistencia gestionada";
+                }
+            })
+          res.redirect('/home?seccion=listado_actual');
+        }
+      })
+    })
+
     router.get('/confirmarpago/:id',isAuthenticated,(req,res)=>{
       let id_participante=req.params.id;
       modelact.getActividad(function(err,activity){
@@ -663,13 +679,15 @@ module.exports = function(passport){
           modelact.getActividad(function(error,actividad){
             modelpart.obtenerEstadoParticipantes(actividad[0].id_actividad,function(error,usuarios){
                     for(var i=0;i<usuarios.length;i++){
-                      doc.text(usuarios[i].nombre+' '+usuarios[i].apellidos,{
-                         width: 412,
-                         align: 'justify',
-                         columns: 1,
+                    if(usuarios[i].asiste=='1'){
+                        doc.text(usuarios[i].nombre+' '+usuarios[i].apellidos,{
+                          width: 412,
+                          align: 'justify',
+                          columns: 1
                         })
                         .font('Times-Roman', 12)
                         .moveDown()
+                      }
                     }
                     doc.end();
               })
@@ -749,13 +767,15 @@ module.exports = function(passport){
                 .fontSize(20)
                 .moveDown()
                   for(var i=0;i<usuarios.length;i++){
-                    doc.text(usuarios[i].nombre+' '+usuarios[i].apellidos,{
+                    if(usuarios[i].asiste=='1'){
+                      doc.text(usuarios[i].nombre+' '+usuarios[i].apellidos,{
                        width: 412,
                        align: 'justify',
                        columns: 1,
                       })
                       .font('Times-Roman', 12)
                       .moveDown()
+                    }
                   }
                   doc.end();
               })

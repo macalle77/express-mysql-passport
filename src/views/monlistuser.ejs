@@ -66,6 +66,7 @@
             <%if(valor=='activos'){%>
             <th>Confirmar firma</th>
             <th>Confirmar pago</th>
+            <th>Confirmar asistencia</th>
             <th>Gestionar</th>
             <%}%>
             <%if(valor=='pendientes'){%>
@@ -88,6 +89,7 @@
                     <%if (valor=='activos'){%>
                     <td><a id="firmado" class="<%= users[i].firmado==1 ? 'btn btn-success':'btn btn-dark'%>" href="#">Firmado</a></td>
                     <td><a id="pagado" class="<%= users[i].pagado==1 ? 'btn btn-success':'btn btn-dark'%>" href="/confirmarpago/<%= users[i].dni%>">Pagado</a></td>
+                    <td><a id="asiste" class="<%= users[i].asiste==1 ? 'btn btn-success':'btn btn-dark'%>" href="/confirmarasistenciaactividad/<%= users[i].dni%>">Asiste</a></td>
                     <td><a id="apuntado" class="<%=  true ? 'btn btn-success':'btn btn-dark'%>" href="/darbajaactividad/<%= users[i].dni%>">Dar de baja</a></td>
                     <%}%>
                     <%if (valor=='pendientes'){%>

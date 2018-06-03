@@ -53,7 +53,7 @@ partModel.obtenerEstadoParticipantesPendientes = function(actividad,callback){
 //Obtener un listado con información de los participantes de una actividad
 partModel.obtenerEstadoParticipantes = function(actividad,callback){
 	if(connection){
-	sql="select * from listadoEstadosUsuarios where id_actividad="+connection.escape(actividad)
+	sql="select * from listadoEstadosUsuarios where id_actividad="+connection.escape(actividad)+" order by asiste"
 		connection.query(sql,function(error,result){
 			if(error) callback(error,null)
 			else {
@@ -116,6 +116,33 @@ partModel.firmarActividad = function(partData,actData,callback){
 					connection.escape(actData)+" AND id_usuario=" +	connection.escape(partData)
 				else{
 					sql1="UPDATE Participantes SET firmado=1 WHERE id_actividad="+
+					connection.escape(actData)+" AND id_usuario=" +	connection.escape(partData)
+				}
+				connection.query(sql1,function(error, result){
+					if(error) throw error
+					else {
+						callback(null, {"updateId" : result});
+					}
+				})
+			}
+		})
+	}
+}
+
+//confirmar asistencia de participante a la actividad
+partModel.confirmarAsistenciaActividad = function(partData,actData,callback){
+	if(connection){
+		sql="SELECT asiste from Participantes where id_actividad=" +
+		connection.escape(actData)+" AND id_usuario=" +	connection.escape(partData)
+		connection.query(sql,function(error, result){
+			if(error) throw error;
+			else{
+			console.log("Valor d pagado:"+result[0].aiste)
+				if(result[0].asiste==1)
+					sql1="UPDATE Participantes SET asiste=0 WHERE id_actividad="+
+					connection.escape(actData)+" AND id_usuario=" +	connection.escape(partData)
+				else{
+					sql1="UPDATE Participantes SET asiste=1 WHERE id_actividad="+
 					connection.escape(actData)+" AND id_usuario=" +	connection.escape(partData)
 				}
 				connection.query(sql1,function(error, result){
