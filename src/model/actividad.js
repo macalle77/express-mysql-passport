@@ -114,7 +114,7 @@ actModel.getActividad = function(callback){
   }
 }
 
-//Actualizar actividades
+//Actualizar actividadesee
 actModel.updateActividad = function(dataAct,id,callback){
 	if(connection){
 		sql="update Actividad set descripcion="+connection.escape(dataAct.descripcion)+","+
