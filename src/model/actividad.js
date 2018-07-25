@@ -50,8 +50,8 @@ actModel.insertActividad = function(actData,callback)
     connection.escape(actData.descripcion)+','+
     connection.escape(actData.requisitos)+','+
     connection.escape(actData.fecha)+','+
-		connection.escape(actData.inicio)+','+
-		connection.escape(actData.fin)+')'
+	connection.escape(actData.inicio)+','+
+	connection.escape(actData.fin)+')'
 
     console.log("Insertar nueva actividad:"+sql);
 
@@ -114,7 +114,7 @@ actModel.getActividad = function(callback){
   }
 }
 
-//Actualizar actividad
+//Actualizar actividades
 actModel.updateActividad = function(dataAct,id,callback){
 	if(connection){
 		sql="update Actividad set descripcion="+connection.escape(dataAct.descripcion)+","+
